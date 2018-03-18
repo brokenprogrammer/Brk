@@ -1,4 +1,5 @@
 #include "lexer.hpp"
+#include <cctype>
 
 Lexer::Lexer(std::string content) {
     this->content = content;
@@ -22,13 +23,65 @@ Token Lexer::getToken() {
     this->skipWhitespace();
 
     Token token = {};
+    token.str = this->current_char;
 
+    std::string::iterator pos = this->curr;
+
+    if (isLetter(this->current_char)) {
+        while(isLetter(this->current_char) || isDigit(this->current_char)) {
+            this->tokenizerStep();
+        }
+        // TODO: Get keyword out of read chars. - Oskar Mendel 2018-03-18
+        int len = std::distance(this->start, this->curr);
+
+
+        token.str = std::string(pos, this->curr);
+        token.type = TOKEN_IDENTIFIER;
+
+        if (len > 1) {
+            
+            //TODO: Loop through all known keywords and if
+                // Found matching keyword then this token is of that
+                // keyword.. - Oskar Mendel 2018-03-18
+        }
+
+
+    } else if (false) {//isNumber(this->current_char)) {
+        // TODO: Number to token. - Oskar Mendel 2018-03-18
+    } else {
+        //TODO: Switch on keywords such as '#' '?' ';'.. - Oskar Mendel 2018-03-18
+    }
 
     return token;
 }
 
 void Lexer::tokenizerStep() {
+    if (this->read_curr < this->end) {
 
+        this->curr = this->read_curr;
+        if (this->current_char == '\n') {
+            this->line = this->curr;
+            this->line_count++;
+        }
+        char c = *this->read_curr;
+        if (c == 0) {
+            // TODO: Handle Null char. - Oskar Mendel 2018-03-18 
+        } else if (c >= 0x80) {
+            // TODO: Handle non ascii character. - Oskar Mendel 2018-03-18
+        }
+
+        this->read_curr += 1;
+        this->current_char = c;
+
+    } else {
+        this->curr = this->end;
+        if (this->current_char == 'n') {
+            this->line = this->curr;
+            this->line_count++;
+        }
+
+        this->current_char = EOF;
+    }
 }
 
 void Lexer::skipWhitespace() {
@@ -38,4 +91,12 @@ void Lexer::skipWhitespace() {
            this->current_char == '\r') {
         this->tokenizerStep();
     }
+}
+
+bool Lexer::isLetter(char c) {
+    return isalpha(c);
+}
+
+bool Lexer::isDigit(char c) {
+    return isdigit(c);
 }

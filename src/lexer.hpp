@@ -7,6 +7,8 @@ enum TokenType {
     TOKEN_EOF,
     TOKEN_INVALID,
 
+    TOKEN_IDENTIFIER,
+
     TOKEN_OPENPAREN,
     TOKEN_CLOSEPAREN,
     TOKEN_OPENBRACE,
@@ -30,6 +32,9 @@ class Lexer {
     private:
         void tokenizerStep();   //TODO: Find a better name for this. - Oskar Mendel 2018-03-18
         void skipWhitespace();
+
+        bool isLetter(char c);
+        bool isDigit(char c);
 
         //TODO: Change theese to proper types, uint8 perhaps.. - Oskar Mendel 2018-03-18
         std::string content;

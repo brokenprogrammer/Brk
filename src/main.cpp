@@ -19,6 +19,9 @@ int main (int argc, char **argv)
 
         std::cout << content << std::endl;
         Lexer lexer(content);
+        Token t = lexer.getToken();
+        std::cout << t.str << std::endl;
+        std::cout << t.type << std::endl;
     }
 
     std::cout << "Hello World!" << std::endl;
