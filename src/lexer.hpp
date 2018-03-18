@@ -12,7 +12,33 @@ enum TokenType {
     TOKEN_OPENPAREN,
     TOKEN_CLOSEPAREN,
     TOKEN_OPENBRACE,
-    TOKEN_CLOSEBRACE
+    TOKEN_CLOSEBRACE,
+
+    TOKEN_KEYWORDSTART,
+    TOKEN_VOID,
+    TOKEN_KEYWORDSEND
+};
+
+struct TokenValue {
+    TokenType type;
+    const char* tokenString;
+}
+
+static const Tokens[] {
+    {TOKEN_EOF, "EOF"},
+
+    {TOKEN_INVALID, "Invalid"},
+    
+    {TOKEN_IDENTIFIER, "Identifier"},
+
+    {TOKEN_OPENPAREN, "("},
+    {TOKEN_CLOSEPAREN, ")"},
+    {TOKEN_OPENBRACE, "{"},
+    {TOKEN_CLOSEBRACE, "}"},
+
+    {TOKEN_KEYWORDSTART, ""},
+    {TOKEN_VOID, "void"},
+    {TOKEN_KEYWORDSEND, ""}
 };
 
 struct Token {

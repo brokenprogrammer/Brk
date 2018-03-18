@@ -22,6 +22,7 @@ int main (int argc, char **argv)
         Token t = lexer.getToken();
         std::cout << t.str << std::endl;
         std::cout << t.type << std::endl;
+        std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << std::endl;
     }
 
     std::cout << "Hello World!" << std::endl;

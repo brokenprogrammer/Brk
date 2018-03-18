@@ -33,13 +33,21 @@ Token Lexer::getToken() {
         }
         // TODO: Get keyword out of read chars. - Oskar Mendel 2018-03-18
         int len = std::distance(this->start, this->curr);
-
-
         token.str = std::string(pos, this->curr);
-        token.type = TOKEN_IDENTIFIER;
 
         if (len > 1) {
-            
+            bool found = false;
+            for (int i = TOKEN_KEYWORDSTART+1; i < TOKEN_KEYWORDSEND; i++) {
+                if (token.str.compare(Tokens[i].tokenString) == 0) {
+                    token.type = Tokens[i].type;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                token.type = TOKEN_IDENTIFIER;
+            }
             //TODO: Loop through all known keywords and if
                 // Found matching keyword then this token is of that
                 // keyword.. - Oskar Mendel 2018-03-18
