@@ -8,7 +8,7 @@ CFLAGS=-std=c++11
 CC=clang++
 
 debug:
-	$(CC) src/main.cpp $(DISABLED_WARNINGS) $(CFLAGS) -g $(LDFLAGS) -o brk.exe
+	$(CC) src/main.cpp src/lexer.cpp $(DISABLED_WARNINGS) $(CFLAGS) -g $(LDFLAGS) -o brk.exe
 
 release:
 	$(CC) src/main.cpp $(DISABLED_WARNINGS) $(CFLAGS) -O3 -march=native $(LDFLAGS) -o brk.exe
