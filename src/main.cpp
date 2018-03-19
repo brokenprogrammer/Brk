@@ -19,15 +19,13 @@ int main (int argc, char **argv)
 
         std::cout << content << std::endl;
         Lexer lexer(content);
-        
-        Token t = lexer.getToken();
-        std::cout << t.str << std::endl;
-        std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << std::endl;
 
+        Token t = lexer.getToken();
+        std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
+        
         while(t.type != TOKEN_EOF) {
             t = lexer.getToken();
-            std::cout << t.str << std::endl;
-            std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << std::endl;
+            std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
         }
     }
 

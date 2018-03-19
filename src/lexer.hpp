@@ -162,6 +162,7 @@ class Lexer {
         Token getToken();
     private:
         void tokenizerStep();   //TODO: Find a better name for this. - Oskar Mendel 2018-03-18
+        Token tokenizerScanNumber();
         void skipWhitespace();
 
         bool isLetter(char c);

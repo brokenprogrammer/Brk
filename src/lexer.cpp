@@ -52,8 +52,8 @@ Token Lexer::getToken() {
         }
 
 
-    } else if (false) {//isNumber(this->current_char)) {
-        // TODO: Number to token. - Oskar Mendel 2018-03-18
+    } else if (isDigit(this->current_char)) {
+        token = tokenizerScanNumber();
     } else {
         char current = this->current_char;
         this->tokenizerStep();
@@ -136,6 +136,11 @@ Token Lexer::getToken() {
                 break;
             case '+':
                 token.type = TOKEN_ADD;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_ADDEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
             case '-':
                 break;
@@ -182,6 +187,36 @@ void Lexer::tokenizerStep() {
 
         this->current_char = EOF;
     }
+}
+
+// TODO: This is a trash function for scanning numbers, make it more robust when
+//  scanning floating points numbers and add support for: binary, hex, octal..
+//  Oskar Mendel 2018-03-19
+Token Lexer::tokenizerScanNumber() {
+    Token token = {};
+    token.str = this->current_char;
+    token.type = TOKEN_INTEGER;
+
+    std::string::iterator pos = this->curr;
+
+    char current = this->current_char;
+    while(isDigit(current)) {
+        this->tokenizerStep();
+        if (this->current_char == '.') {
+            if (token.type != TOKEN_FLOATING) {
+                token.type = TOKEN_FLOATING;
+                this->tokenizerStep();
+                current = this->current_char;
+            } else {
+                // Multiple dots were found in the number..
+            }
+        }
+        current = this->current_char;
+    }
+
+    token.str = std::string(pos, this->curr);
+
+    return token;
 }
 
 void Lexer::skipWhitespace() {
