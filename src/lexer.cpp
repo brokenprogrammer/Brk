@@ -31,7 +31,7 @@ Token Lexer::getToken() {
         while(isLetter(this->current_char) || isDigit(this->current_char)) {
             this->tokenizerStep();
         }
-        // TODO: Get keyword out of read chars. - Oskar Mendel 2018-03-18
+
         int len = std::distance(this->start, this->curr);
         token.str = std::string(pos, this->curr);
 
@@ -45,19 +45,111 @@ Token Lexer::getToken() {
                 }
             }
 
+            // No keyword was found so this must be an identifier.
             if (!found) {
                 token.type = TOKEN_IDENTIFIER;
             }
-            //TODO: Loop through all known keywords and if
-                // Found matching keyword then this token is of that
-                // keyword.. - Oskar Mendel 2018-03-18
         }
 
 
     } else if (false) {//isNumber(this->current_char)) {
         // TODO: Number to token. - Oskar Mendel 2018-03-18
     } else {
-        //TODO: Switch on keywords such as '#' '?' ';'.. - Oskar Mendel 2018-03-18
+        char current = this->current_char;
+        this->tokenizerStep();
+        switch(current) {
+            case EOF:
+                token.type = TOKEN_EOF;
+                break;
+            case '\'':
+                break;
+            case '"':
+                // Such faulty implementation, Doesn't support escaped quotes and 
+                // doesn't react to non terminated string at the end of line.
+                // TODO: Fix whats stated above. - Oskar Mendel 2018-03-19
+                token.type = TOKEN_STRING;
+                while (this->current_char != '"') {
+                    this->tokenizerStep();
+                }
+                
+                token.str = std::string(pos, this->curr+1);
+                this->tokenizerStep();
+
+                break;
+            case '.':
+                // TODO: Period have to have some logic to it in the future. - Oskar Mendel 2018-03-19
+                token.type = TOKEN_PERIOD;
+                break;
+            case ',':
+                token.type = TOKEN_COMMA;
+                break;
+            case '?':
+                token.type = TOKEN_QUESTION;
+                break;
+            case ':':
+                token.type = TOKEN_COLON;
+                break;
+            case ';':
+                token.type = TOKEN_SEMICOLON;
+                break;
+            case '(':
+                token.type = TOKEN_OPENPAREN;
+                break;
+            case ')':
+                token.type = TOKEN_CLOSEPAREN;
+                break;
+            case '{':
+                token.type = TOKEN_OPENBRACE;
+                break;
+            case '}':
+                token.type = TOKEN_CLOSEBRACE;
+                break;
+            case '[':
+                token.type = TOKEN_OPENBRACKET;
+                break;
+            case ']':
+                token.type = TOKEN_CLOSEBRACKET;
+                break;
+            case '\\':
+                break;
+            case '<':
+                break;
+            case '>':
+                break;
+            case '_':
+                break;
+            case '$':
+                break;
+            case '%':
+                break;
+            case '#':
+                break;
+            case '&':
+                break;
+            case '^':
+                break;
+            case '!':
+                break;
+            case '*':
+                break;
+            case '/':
+                break;
+            case '+':
+                token.type = TOKEN_ADD;
+                break;
+            case '-':
+                break;
+            case '|':
+                break;
+            case '~':
+                break;
+            case '=':
+                token.type = TOKEN_EQUAL;
+                break;
+            default:
+                token.type = TOKEN_INVALID;
+                break;
+        }
     }
 
     return token;
