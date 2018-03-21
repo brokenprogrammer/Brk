@@ -1,0 +1,33 @@
+Goal with this language is to make an easy to use C/C++.
+I want the ease of use of Java but at the same time not the awfull complexity
+of C++.
+
+* OOP should be a supported, there should be polymorhpism but no need 
+    for multiple inheritance like C++.
+* unittest keyword to allow for unittesting within the .brk files.
+    this is the same feature that D allows for.
+* primitive types that are easy to understand how big / small they are..
+    uint8, uint16, uint32, uint64...
+* type inference, just like the auto keyword in c++
+* Multiple return values from functions
+
+
+                TODO:
+* Find out all the AST classes that I should create
+    * This can be done by creating a C like "grammar" or look at 
+        the grammar that exist for C..
+* Write function prototypes for all the parse functions the
+    parser class should have
+* Implement the classes as much as needed.
+* Implement the individual parse functions.
+
+Start writing a parser by parsing the following, 
+    this will give an overview with the classes to start with: 
+        * 1 - Parse expression -> Parse Primary -> Parse number expression
+        * (1) - Parse parens -> Eat '(' -> Parse expression -> Parse Primary
+        * (1 + 2) - Parse parens expression -> Eat '(' -> Parse expression -> Parse Primary
+        * (1 - 2- 3) - Parse parens expression -> Eat '(' -> Parse expression -> Parse Primary
+        * (2 * 3 - 5 * 4) - Parse parens expression -> Eat '(' -> Parse expression -> Parse Primary
+        * 2 * (3-5) * 4
+        * -1
+        * 2+-3

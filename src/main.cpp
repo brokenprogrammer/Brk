@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <streambuf>
-#include "lexer.hpp"
+#include "parser.hpp"
 
 int main (int argc, char **argv)
 {
@@ -18,15 +18,16 @@ int main (int argc, char **argv)
         content.assign((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
         std::cout << content << std::endl;
-        Lexer lexer(content);
-
-        Token t = lexer.getToken();
-        std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
-        
-        while(t.type != TOKEN_EOF) {
-            t = lexer.getToken();
-            std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
-        }
+        //Lexer lexer(content);
+        Parser parser(content);
+        parser.parse();
+        //Token t = lexer.getToken();
+        //std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
+        //
+        //while(t.type != TOKEN_EOF) {
+        //    t = lexer.getToken();
+        //    std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
+        //}
     }
 
     return 0;
