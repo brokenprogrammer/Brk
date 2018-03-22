@@ -4,7 +4,7 @@
 
 DISABLED_WARNINGS= -Wall
 LDFLAGS=-pthread -lstdc++ #-lm
-CFLAGS=-std=c++11
+CFLAGS=-std=c++14
 CC=clang++
 
 debug:
