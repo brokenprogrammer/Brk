@@ -13,6 +13,8 @@ of C++.
 
 
                 TODO:
+1: Finish the grammar, find out how an expression should
+    be defined according to the grammar..
 * Find out all the AST classes that I should create
     * This can be done by creating a C like "grammar" or look at 
         the grammar that exist for C..
@@ -48,10 +50,18 @@ variable-decl = TYPE NAME ';'
 parens-expr = '(' <expr> ')'
 
 statement = 'return' <expr>? ';'
-            |'if'
-            | 'while'
-            | 'for'
+            | 'if' '(' <cond-expr> ')' '{' <statement> '}'
+            | 'if' '(' <cond-expr> ')' '{' <statement> '}' 'else' '{' <statement> '}'
+            | 'while' '(' <cond-expr> ')' '{' <statement> '}'
+            | 'for' '(' <exp-seq> ';' <cond-expr> ';' <expr-seq>) '{' <statement> '}' 
             | '{' <statement> '}'
             | <expr>
 
-expr = 
+expr = NAME '=' <expr>
+       | NAME '(' <argument-list> ')'
+       | 
+
+expr-seq = <expr-seq> ',' <expr>
+        | <expr>
+
+cond-expr = 
