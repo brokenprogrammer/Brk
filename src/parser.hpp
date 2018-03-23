@@ -30,12 +30,15 @@ private:
     
     // Should return an expression AST?
     void parseDefinition(Token t);
-    void parseExpression();
     void parsePrimary();
     std::unique_ptr<NumberExpression> parseNumber();
 
+    std::unique_ptr<Expression> parseLogicalOrExpression();
+    std::unique_ptr<Expression> parseConditionalExpression();
+    std::unique_ptr<Expression> parseAssignExpression();
+    std::unique_ptr<Expression> parseExpression();
+    
     Lexer lexer;
-
     int parsedTokens;
     Token currentToken;
     std::vector<Token> tokens;

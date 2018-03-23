@@ -54,12 +54,6 @@ void Parser::parseDefinition(Token t) {
     // Else we parse a variable
 }
 
-void Parser::parseExpression() {
-    // TODO: Handle binary expressions here as well..
-    std::cout << "This is a Expression" << std::endl;
-    this->parsePrimary();
-}
-
 void Parser::parsePrimary() {
 
    //TODO: A lot of missing tokens to match on here.. Need to be added. Oskar Mendel 2018-03-20
@@ -89,4 +83,118 @@ std::unique_ptr<NumberExpression> Parser::parseNumber() {
     auto res = std::make_unique<NumberExpression>(s);
     // Consume number token..
     return std::move(res);
+}
+
+std::unique_ptr<Expression> Parser::parseLogicalOrExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    //e = parseLogicalAndExpression();
+    while (this->currentToken.type == TOKEN_LOGICALOR) {
+        //Advance token
+        //e1 = parseLogicalAndExpression();
+        //e = new LogicalExpression(TOKEN_LOGICALOR, e, e1);
+    }
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseConditionalExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    //e = parseLogicalOrExpression();
+
+    if (this->currentToken.type == TOKEN_QUESTION) {
+        //Advance token
+        //e1 = parseExpression();
+        //Verify that current token is ':'
+        //e2 = parseConditionalExpression();
+        //e = new ConditionalExpression(e, e1, e2);
+    }
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseAssignExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    //e = parseConditionalExpression();
+    while(1) {
+        switch(this->currentToken.type) {
+            case TOKEN_ASSIGN:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new AssignExpression(e, e1);
+                continue;
+            case TOKEN_ADDEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new AddAssignExpression(e, e1);
+                continue;
+            case TOKEN_SUBTRACTEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new SubAssignExpression(e, e1);
+                continue;
+            case TOKEN_MULTIPLYEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new MulAssignExpression(e, e1);
+                continue;
+            case TOKEN_DIVIDEEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new DivAssignExpression(e, e1);
+                continue;
+            case TOKEN_MODEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new ModAssignExpression(e, e1);
+                continue;
+            case TOKEN_ANDEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new AndAssignExpression(e, e1);
+                continue;
+            case TOKEN_OREQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new OrAssignExpression(e, e1);
+                continue;
+            case TOKEN_XOREQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new XorAssignExpression(e, e1);
+                continue;
+            case TOKEN_SHIFTLEFTEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new ShlAssignExpression(e, e1);
+                continue;
+            case TOKEN_SHIFTRIGHTEQUAL:
+                //Advance token
+                //e1 = parseAssignExpression();
+                //e = new ShrAssignExpression(e, e1);
+                continue;
+            default:
+                break;
+        }
+        break;
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    //e = parseAssignExpression();
+    while (currentToken.type == TOKEN_COMMA) {
+        this->currentToken = this->lexer.getToken();
+        //e1 = parseAssignExpression();
+        //e = new CommaExpression(e, e1);
+    }
+
+    return e;
 }
