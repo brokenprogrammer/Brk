@@ -1,0 +1,138 @@
+assign_op
+    '='
+    | '*='
+    | '/='
+    | '%='
+    | '+='
+    | '-='
+    | '<<='
+    | '>>='
+    | '&='
+    | '^='
+    | '|='
+
+unary_op =
+    '&'
+    | '*'
+    | '+'
+    | '-'
+    | '~'
+    | '!'
+
+program = <function-decl>
+          | <variable-decl>
+          | 'struct'
+          | 'union'
+          | 'const'
+          | 'enum'
+          
+function-decl = TYPE NAME '(' <function_params> ')' '{' <statement> '}'
+variable-decl = TYPE NAME ';' 
+                | TYPE NAME  '=' <expr>
+
+parens-expr = '(' <expr> ')'
+
+statement = 'return' <expr>? ';'
+            | 'if' '(' <cond-expr> ')' '{' <statement> '}'
+            | 'if' '(' <cond-expr> ')' '{' <statement> '}' 'else' '{' <statement> '}'
+            | 'while' '(' <cond-expr> ')' '{' <statement> '}'
+            | 'for' '(' <exp-seq> ';' <cond-expr> ';' <expr-seq>) '{' <statement> '}' 
+            | '{' <statement> '}'
+            | <expr>
+
+primary_expr =
+    NAME
+    | CONSTANT
+    | STRING_LITERAL
+    | '(' expression ')'
+
+post_expr =
+    <primary_expr>
+    | <post_expr> '[' expression ']'
+    | <post_expr> '(' ')'
+    | <post_expr> '(' <arg_expr_list> ')'
+    | <post_expr> '.' NAME
+    | <post_expr> '*' NAME
+    | <post_expr> '++'
+    | <post_expr> '--'
+
+arg_expr_list =
+    <assig_expr>
+    | <arg_expr_list> ',' <assig_expr>
+
+
+unary_expr =
+    <post_expr>
+    | '++' <unary_expr>
+    | '--' <unary_expr>
+    | <unary_op> cast_expression
+    | 'sizeof' <unary_expr>
+    | 'sizeof' '(' TYPE ')'
+
+cast_expr =
+    <unary_expr>
+    | '(' TYPE ')' <cast_expr>
+
+mult_expr =
+    <cast_expr>
+    | <mult_expr> '*' <cast_expr>
+    | <mult_expr> '/' <cast_expr>
+    | <mult_expr> '%' <cast_expr>
+
+additive_expr =
+    <mult_expr>
+    | <additive_expr> '+' <mult_expr>
+    | <additive_expr> '-' <mult_expr>
+
+shift_expr =
+    <additive_expr>
+    | <shift_expr> '>>' <additive_expr>
+    | <shift_expr> '<<' <additive_expr>
+
+
+relational_expr =
+    <shift_expr>
+    | <relational_expr> '<' <shift_expr>
+    | <relational_expr> '>' <shift_expr>
+    | <relational_expr> '<=' <shift_expr>
+    | <relational_expr> '>=' <shift_expr>
+
+equality_expr =
+    <relational_expr>
+    | <equality_expr> '==' <relational_expr>
+    | <equality_expr> '!=' <relational_expr>
+
+and_expr =
+    <equality_expr>
+    | <and_expr> '&' <equality_expr>
+
+exclusive_or_expr =
+    <and_expr>
+    | <exclusive_or_expr> '^' <and_expr>
+
+inclusive_or_expr =
+    <exclusive_or_expr>
+    | <inclusive_or_expr> '|' <exclusive_or_expr>
+
+logical_and_expr =
+    <inclusive_or_expr>
+    | <logical_and_expr> '&&' <inclusive_or_expr>
+
+logical_or_expr =
+    <logical_and_expr>
+    | <logical_or_expr> '||' <logical_and_expr>
+
+cond_expr =
+    <logical_or_expr>
+    | <logical_or_expr> '?' <expr> ':' <cond_expr>
+
+assig_expr =
+    <cond_expr>
+    | <unary_expr> <assign_op> <assign_expr>
+
+expr = 
+    <assign_expr>
+    | <expr> ',' <assign_expr>
+
+cons_expr =
+    <cond_expr>

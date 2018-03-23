@@ -13,6 +13,8 @@ of C++.
 
 
                 TODO:
+1: Finish the grammar, find out how an expression should
+    be defined according to the grammar..
 * Find out all the AST classes that I should create
     * This can be done by creating a C like "grammar" or look at 
         the grammar that exist for C..
@@ -31,27 +33,3 @@ Start writing a parser by parsing the following,
         * 2 * (3-5) * 4
         * -1
         * 2+-3
-
-Grammar:
-
-program = <function-decl>
-          | <variable-decl>
-          | 'struct'
-          | 'union'
-          | 'const'
-          | 'enum'
-          
-function-decl = TYPE NAME '(' <function_params> ')' '{' <statement> '}'
-variable-decl = TYPE NAME ';' 
-                | TYPE NAME  '=' <expr>
-
-parens-expr = '(' <expr> ')'
-
-statement = 'return' <expr>? ';'
-            |'if'
-            | 'while'
-            | 'for'
-            | '{' <statement> '}'
-            | <expr>
-
-expr = 
