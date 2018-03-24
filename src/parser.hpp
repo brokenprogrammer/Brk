@@ -2,21 +2,9 @@
 #define BRK_PARSER_HPP
 
 #include "lexer.hpp"
+#include "expression.hpp"
 #include <memory>
 #include <vector>
-
-class Expression {
-public:
-    virtual ~Expression() {}
-};
-
-class NumberExpression : public Expression {
-public:
-    NumberExpression(double t_value) : m_value(t_value) {}
-
-    double m_value;
-private:
-};
 
 class Parser {
 public:
@@ -31,7 +19,7 @@ private:
     // Should return an expression AST?
     void parseDefinition(Token t);
     void parsePrimary();
-    std::unique_ptr<NumberExpression> parseNumber();
+    //std::unique_ptr<NumberExpression> parseNumber();
 
     std::unique_ptr<Expression> parsePrimaryExpression();
     std::unique_ptr<Expression> parsePostExpression(std::unique_ptr<Expression> e);
