@@ -108,9 +108,9 @@ static const Tokens[] {
 
     {TOKEN_OPERATORSTART, ""},
     {TOKEN_ADD, "+"},
-    {TOKEN_ADDADD, "++"},
+    {TOKEN_ADDADD, "++"}, // TODO: Not being lexed yet.. Oskar Mendel 2018-03-24
     {TOKEN_SUBTRACT, "-"},
-    {TOKEN_SUBTRACTSUBTRACT, "--"},
+    {TOKEN_SUBTRACTSUBTRACT, "--"}, // TODO: Not being lexed yet.. Oskar Mendel 2018-03-24
     {TOKEN_MULTIPLY, "*"},
     {TOKEN_DIVIDE, "/"},
     {TOKEN_MOD, "%"},
@@ -140,8 +140,8 @@ static const Tokens[] {
 
     {TOKEN_COMPARISONSTART, ""},
     {TOKEN_ISEQUAL, "=="},
-    {TOKEN_LOGICALOR, "||"},
-    {TOKEN_LOGICALAND, "&&"},
+    {TOKEN_LOGICALOR, "||"}, // TODO: Not being lexed yet.. Oskar Mendel 2018-03-24
+    {TOKEN_LOGICALAND, "&&"}, // TODO: Not being lexed yet.. Oskar Mendel 2018-03-24
     {TOKEN_NOTEQUAL, "!="},
     {TOKEN_LOWERTHAN, "<"},
     {TOKEN_GREATERTHAN, ">"},
