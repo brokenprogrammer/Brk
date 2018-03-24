@@ -71,7 +71,7 @@ unary_expr =
 
 cast_expr =
     <unary_expr>
-    | '(' TYPE ')' <cast_expr>
+    | '(' TYPE ')' <unary_expr>
 
 mult_expr =
     <cast_expr>
@@ -89,18 +89,14 @@ shift_expr =
     | <shift_expr> '>>' <additive_expr>
     | <shift_expr> '<<' <additive_expr>
 
-
-relational_expr =
-    <shift_expr>
-    | <relational_expr> '<' <shift_expr>
-    | <relational_expr> '>' <shift_expr>
-    | <relational_expr> '<=' <shift_expr>
-    | <relational_expr> '>=' <shift_expr>
-
 equality_expr =
-    <relational_expr>
-    | <equality_expr> '==' <relational_expr>
-    | <equality_expr> '!=' <relational_expr>
+    <shift_expr>
+    | <equality_expr> '==' <shift_expr>
+    | <equality_expr> '!=' <shift_expr>
+    | <equality_expr> '<' <shift_expr>
+    | <equality_expr> '>' <shift_expr>
+    | <equality_expr> '<=' <shift_expr>
+    | <equality_expr> '>=' <shift_expr>
 
 and_expr =
     <equality_expr>
