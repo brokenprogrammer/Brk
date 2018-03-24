@@ -30,7 +30,9 @@ enum TokenType {
 
     TOKEN_OPERATORSTART,
     TOKEN_ADD,
+    TOKEN_ADDADD,
     TOKEN_SUBTRACT,
+    TOKEN_SUBTRACTSUBTRACT,
     TOKEN_MULTIPLY,
     TOKEN_DIVIDE,
     TOKEN_MOD,
@@ -60,6 +62,8 @@ enum TokenType {
 
     TOKEN_COMPARISONSTART,
     TOKEN_ISEQUAL,
+    TOKEN_LOGICALOR,
+    TOKEN_LOGICALAND,
     TOKEN_NOTEQUAL,
     TOKEN_LOWERTHAN,
     TOKEN_GREATERTHAN,
@@ -104,7 +108,9 @@ static const Tokens[] {
 
     {TOKEN_OPERATORSTART, ""},
     {TOKEN_ADD, "+"},
+    {TOKEN_ADDADD, "++"},
     {TOKEN_SUBTRACT, "-"},
+    {TOKEN_SUBTRACTSUBTRACT, "--"},
     {TOKEN_MULTIPLY, "*"},
     {TOKEN_DIVIDE, "/"},
     {TOKEN_MOD, "%"},
@@ -134,6 +140,8 @@ static const Tokens[] {
 
     {TOKEN_COMPARISONSTART, ""},
     {TOKEN_ISEQUAL, "=="},
+    {TOKEN_LOGICALOR, "||"},
+    {TOKEN_LOGICALAND, "&&"},
     {TOKEN_NOTEQUAL, "!="},
     {TOKEN_LOWERTHAN, "<"},
     {TOKEN_GREATERTHAN, ">"},
