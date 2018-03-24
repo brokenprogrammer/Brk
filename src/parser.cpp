@@ -85,6 +85,274 @@ std::unique_ptr<NumberExpression> Parser::parseNumber() {
     return std::move(res);
 }
 
+std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    switch(this->currentToken.type) {
+        case TOKEN_IDENTIFIER:
+            break;
+        default:
+            // Error
+            e = nullptr;
+            // Advance token
+            break;
+    }
+
+    return parsePostExpression(e);
+}
+
+std::unique_ptr<Expression> Parser::parsePostExpression(std::unique_ptr<Expression> e) {
+
+    while(1) {
+        switch (this->currentToken.type) {
+            case TOKEN_ADDADD:
+                break;
+            case TOKEN_SUBTRACTSUBTRACT:
+                break;
+            case TOKEN_DOT:
+                break;
+            case TOKEN_MULTIPLY:
+                break;
+            case TOKEN_OPENPAREN:
+                break;
+            case TOKEN_OPENBRACKET:
+                break;
+            default:
+                return e;
+        }
+
+        // advance token
+    }
+}
+
+std::unique_ptr<Expression> Parser::parseUnaryExpression() {
+    std::unique_ptr<Expression> e;
+
+    switch (this->currentToken.type) {
+        case TOKEN_ADDADD:
+            // Advance token
+            e = parseUnaryExpression();
+            e = new AddAssignExpression(e, new IntegerExpression(1));
+            break;
+        case TOKEN_SUBTRACTSUBTRACT:
+            // Advance token
+            e = parseUnaryExpression();
+            e = new SubAssignExpression(e, new IntegerExpression(1));
+            break;
+        case TOKEN_AND:
+            // Advance token
+            e = parseUnaryExpression();
+            e = new AddressExpression(e);
+            break;
+        case TOKEN_MULTIPLY:
+            e = parseUnaryExpression();
+            e = new PointerExpression(e);
+            break;
+        case TOKEN_ADD:
+            // Advance token
+            e = parseUnaryExpression();
+            break;
+        case TOKEN_SUBTRACT:
+            // Advance token
+            e = parseUnaryExpression();
+            e = new NegativeExpression(e);
+            break;
+        case TOKEN_TILDE:
+            // Advance token
+            e = parseUnaryExpression();
+            e = new ComplementExpression(e);
+            break;
+        case TOKEN_NOT:
+            // Advance tokne
+            e = parseUnaryExpression();
+            e = new NotExpression(e);
+            break;
+        //TODO: Add unary keyword "new", "delete" Oskar Mendel 2018-3-24 
+        default:
+            e = parsePrimaryExpression();
+            break;
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseCastExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    if (this->currentToken.type == TOKEN_OPENPAREN) {
+        // Advance token
+        e = parseType();
+        // verify current token is ')'
+        e1 = parseUnaryExpression();
+        e = new CastExpression(e, e1);
+    } else {
+        e = parseUnaryExpression();
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseMultExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseCastExpression();
+    switch (this->currentToken.type) {
+        case TOKEN_MULTIPLY:
+            // Advance token
+            e1 = parseCastExpression();
+            e = new MultExpression(e, e1);
+            break;
+        case TOKEN_DIVIDE:
+            // Advance token
+            e1 = parseCastExpression();
+            e = new MultExpression(e, e1);
+            break;
+        case TOKEN_MOD:
+            // Advance token
+            e1 = parseCastExpression();
+            e = new MultExpression(e, e1);
+            break;
+
+        default:
+            break;
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseAddExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseMultExpression();
+    switch (this->currentToken.type) {
+        case TOKEN_ADD:
+            // Advance token
+            e1 = parseMultExpression();
+            e = new AddExpression(e, e1);
+            break;
+        case TOKEN_SUBTRACT:
+            // Advance token
+            e1 = parseMultExpression();
+            e = new SubExpression(e, e1);
+            break;
+
+        default:
+            break;
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseShiftExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseAddExpression();
+    switch (this->currentToken.type) {
+        case TOKEN_SHIFTLEFT:
+            // Advance token
+            // e1 = parseAddExpression();
+            // e = new ShlExpression(e, e1);
+            break;
+        case TOKEN_SHIFTRIGHT:
+            // Advance token
+            // e1 = parseAddExpression();
+            // e = new ShrExpression(e, e1);
+            break;
+        
+        default:
+            break;
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseEqualityExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseShiftExpression();
+    switch(this->currentToken.type) {
+        case TOKEN_EQUALEQUAL:
+        case TOKEN_NOTEQUAL:
+            // Advance token
+            // e1 = parseShiftExpression();
+            // e = new EqualityExpression(this->currentToken.type, e, e1);
+            break;
+        case TOKEN_LESSTHAN:
+        case TOKEN_GREATERTHAN:
+        case TOKEN_LESSOREQUAL:
+        case TOKEN_GREATEROREQUAL:
+            // Advance token
+            // e1 = parseShiftExpression();
+            // e = new EqualityExpression(this->currentToken.type, e, e1);
+        default:
+            break;
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseAndExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseEqualityExpression();
+    while (this->currentToken.type == TOKEN_AND) {
+        //Advance token
+        //e1 = parseEqualityExpression();
+        e = new AndExpression(e, e1);
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseXorExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseAndExpression();
+    while (this->currentToken.type == TOKEN_XOR) {
+        //Advance token
+        //e1 = parseAndExpression();
+        e = new XorExpression(e, e1);
+    }
+
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseOrExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseXorExpression();
+    while (this->currentToken.type == TOKEN_OR) {
+        //AdvanceToken
+        //e1 = parseXorExpression();
+        //e = new OrExpression(e, e1);
+    }
+    
+    return e;
+}
+
+std::unique_ptr<Expression> Parser::parseLogicalAndExpression() {
+    std::unique_ptr<Expression> e;
+    std::unique_ptr<Expression> e1;
+
+    e = parseOrExpression();
+    while (this->currentToken.type == TOKEN_LOGICALAND) {
+        //Advance token
+        //e1 = parseOrExpression();
+        //e = new LogicalAndExpression(TOKEN_LOGICALAND, e, e1);
+    }
+
+    return e;
+}
+
 std::unique_ptr<Expression> Parser::parseLogicalOrExpression() {
     std::unique_ptr<Expression> e;
     std::unique_ptr<Expression> e1;
@@ -93,7 +361,7 @@ std::unique_ptr<Expression> Parser::parseLogicalOrExpression() {
     while (this->currentToken.type == TOKEN_LOGICALOR) {
         //Advance token
         //e1 = parseLogicalAndExpression();
-        //e = new LogicalExpression(TOKEN_LOGICALOR, e, e1);
+        //e = new LogicalOrExpression(e, e1);
     }
     return e;
 }
