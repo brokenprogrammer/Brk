@@ -62,8 +62,8 @@ void Parser::parsePrimary() {
            //this->parseIdentifier(); //TODO: Oskar Mendel 2018-03-22
            break;
        case TOKEN_INTEGER: // TODO: Should theese fall through? Oskar Mendel 2018-03-20
-           {auto res = this->parseNumber();
-           std::cout << "Number: " << res->m_value << std::endl;}
+           //{auto res = this->parseNumber();
+           //std::cout << "Number: " << res->m_value << std::endl;}
            break;
        case TOKEN_FLOATING:
            break;
@@ -76,14 +76,14 @@ void Parser::parsePrimary() {
    }
 }
 
-std::unique_ptr<NumberExpression> Parser::parseNumber() {
+/*std::unique_ptr<NumberExpression> Parser::parseNumber() {
 
     std::cout << "Parsing a number" << std::endl;
     int s = stoi(currentToken.str);
     auto res = std::make_unique<NumberExpression>(s);
     // Consume number token..
     return std::move(res);
-}
+} */
 
 std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
     std::unique_ptr<Expression> e;
@@ -112,7 +112,7 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
             break;
     }
 
-    return parsePostExpression(e);
+    return parsePostExpression(std::move(e));
 }
 
 std::unique_ptr<Expression> Parser::parsePostExpression(std::unique_ptr<Expression> e) {
@@ -209,7 +209,7 @@ std::unique_ptr<Expression> Parser::parseCastExpression() {
 
     if (this->currentToken.type == TOKEN_OPENPAREN) {
         // Advance token
-        e = parseType();
+        //e = parseType();
         // verify current token is ')'
         e1 = parseUnaryExpression();
         //e = new CastExpression(e, e1);
@@ -487,7 +487,7 @@ std::unique_ptr<Expression> Parser::parseExpression() {
     while (currentToken.type == TOKEN_COMMA) {
         this->currentToken = this->lexer.getToken();
         //e1 = parseAssignExpression();
-        //e = new CommaExpression(e, e1);
+        //e = new CommaExpression(std::move(e), std::move(e1));
     }
 
     return e;
