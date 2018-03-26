@@ -34,12 +34,13 @@ private:
 
 class IdentifierExpression : public Expression {
 public:
-    IdentifierExpression(std::unique_ptr<Expression> t_identifier)
-        : m_identifier(std::move(t_identifier)) { }
+    IdentifierExpression(const std::string &t_identifier)
+        : m_identifier(t_identifier) { }
 
     // TODO: IdentifierExpression that uses a declaration - Oskar Mendel 2018-03-26
 
-    std::unique_ptr<Expression> m_identifier;
+    //TODO: This should be some form of pointer. Oskar Mendel 2018-03-27
+    Identifier m_identifier;
 private:
 };
 
@@ -61,7 +62,7 @@ public:
 private:
 };
 
-class StringExpression {
+class StringExpression : public Expression {
 public:
     StringExpression(const std::string &t_value) : m_value(t_value) { }
 

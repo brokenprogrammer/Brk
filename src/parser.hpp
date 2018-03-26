@@ -14,13 +14,8 @@ public:
     ~Parser();
 
     void parse();
-private:
-    
-    // Should return an expression AST?
-    void parseDefinition(Token t);
-    void parsePrimary();
-    //std::unique_ptr<NumberExpression> parseNumber();
 
+private:
     std::unique_ptr<Expression> parsePrimaryExpression();
     std::unique_ptr<Expression> parsePostExpression(std::unique_ptr<Expression> e);
     std::unique_ptr<Expression> parseUnaryExpression();
@@ -39,7 +34,7 @@ private:
     std::unique_ptr<Expression> parseExpression();
 
     Lexer lexer;
-    int parsedTokens;
+    //int parsedTokens;
     Token currentToken;
     std::vector<Token> tokens;
 };

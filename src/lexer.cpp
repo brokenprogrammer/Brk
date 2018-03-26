@@ -35,8 +35,8 @@ Token Lexer::getToken() {
         int len = std::distance(this->start, this->curr);
         token.str = std::string(pos, this->curr);
 
+        bool found = false;
         if (len > 1) {
-            bool found = false;
             for (int i = TOKEN_KEYWORDSTART+1; i < TOKEN_KEYWORDSEND; i++) {
                 if (token.str.compare(Tokens[i].tokenString) == 0) {
                     token.type = Tokens[i].type;
@@ -44,11 +44,11 @@ Token Lexer::getToken() {
                     break;
                 }
             }
+        }
 
-            // No keyword was found so this must be an identifier.
-            if (!found) {
-                token.type = TOKEN_IDENTIFIER;
-            }
+        // No keyword was found so this must be an identifier.
+        if (!found) {
+            token.type = TOKEN_IDENTIFIER;
         }
 
 
