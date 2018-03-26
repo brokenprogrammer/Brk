@@ -147,57 +147,101 @@ class ConditionalExpression {
 
 //TODO: Binary Oskar Mendel 2018-03-23
 class AssignExpression {
-
+public:
+    AssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class AddAssignExpression {
-
+public:
+    AddAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class SubAssignExpression {
-
+public:
+    SubAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class MulAssignExpression {
-
+public:
+    MulAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class DivAssignExpression {
-
+public:
+    DivAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class ModAssignExpression {
-
+public:
+    ModAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class AndAssignExpression {
-
+public:
+    AndAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class OrAssignExpression {
-
+public:
+    OrAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class XorAssignExpression {
-
+public:
+    XorAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
 class ShlAssignExpression {
-
+public:
+    ShlAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+        
+private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class ShrAssignExpression {
+class ShrAssignExpression : public BinaryExrepssion {
+public:
+    ShrAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
 
+private:
 };
 
 //TODO: Binary Oskar Mendel 2018-03-23
