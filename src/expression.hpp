@@ -1,6 +1,7 @@
 #ifndef BRK_EXPRESSION_HPP
 #define BRK_EXPRESSION_HPP
 
+#include "identifier.hpp"
 #include <memory>
 
 class Expression {
@@ -13,7 +14,7 @@ private:
 class UnaryExpression : public Expression {
 public:
     UnaryExpression(std::unique_ptr<Expression> e) :
-        e(std::move(e)) {}
+        e(std::move(e)) { }
 
     std::unique_ptr<Expression> e;
 
@@ -31,122 +32,242 @@ public:
 private:
 };
 
-class IdentifierExpression {
+class IdentifierExpression : public Expression {
+public:
+    IdentifierExpression(std::unique_ptr<Expression> t_identifier)
+        : m_identifier(std::move(t_identifier)) { }
 
+    // TODO: IdentifierExpression that uses a declaration - Oskar Mendel 2018-03-26
+
+    std::unique_ptr<Expression> m_identifier;
+private:
 };
 
-class IntegerExpression {
+class IntegerExpression : public Expression {
+public:
+    IntegerExpression(long long t_value) : m_value(t_value) { }
 
+    long long m_value;
+
+private:
 };
 
-class FloatingExpression {
+class FloatingExpression : public Expression {
+public:
+    FloatingExpression(double t_value) : m_value(t_value) { }
 
+    long long m_value;
+
+private:
 };
 
 class StringExpression {
+public:
+    StringExpression(const std::string &t_value) : m_value(t_value) { }
 
+    std::string m_value;
+
+private:
 };
 
-class PostIncrementExpression {
+class PostIncrementExpression : public BinaryExpression {
+public:
+    // TODO: Later implement this in .cpp Oskar Mendel 2018-03-27
+    PostIncrementExpression(std::unique_ptr<Expression> e);
 
+private:
 };
 
-class PostDecrementExpression {
+class PostDecrementExpression : public BinaryExpression {
+public:
+    // TODO: Later implement this in .cpp Oskar Mendel 2018-03-27
+    PostDecrementExpression(std::unique_ptr<Expression> e);
 
+private:
 };
 
-class CallExpression {
+//TODO: Should take an array of arguments.. Oskar Mendel 2018-03-27
+class CallExpression : public UnaryExpression{
+public:
+    CallExpression(std::unique_ptr<Expression> e)
+        : UnaryExpression(std::move(e)) { }
 
+private:
 };
 
-class ArrayExpression {
+class ArrayExpression : public BinaryExpression {
+public:
+    ArrayExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class NotExpression : public UnaryExpression{
+public:
+    NotExpression(std::unique_ptr<Expression> e)
+        : UnaryExpression(std::move(e)) { }
+
+private:
+};
+
+class ComplementExpression : public UnaryExpression{
+public:
+    ComplementExpression(std::unique_ptr<Expression> e)
+        : UnaryExpression(std::move(e)) { }
+
+private:
+};
+
+class NegativeExpression : public UnaryExpression{
+public:
+    NegativeExpression(std::unique_ptr<Expression> e)
+        : UnaryExpression(std::move(e)) { }
+
+private:
+};
+
+class PointerExpression : public UnaryExpression{
+public:
+    PointerExpression(std::unique_ptr<Expression> e)
+        : UnaryExpression(std::move(e)) { }
+
+private:
+};
+
+class AddressExpression : public UnaryExpression{
+public:
+    AddressExpression(std::unique_ptr<Expression> e)
+        : UnaryExpression(std::move(e)) { }
+
+private:
+};
+
+class CastExpression : public UnaryExpression {
+public:
+    //TODO: Takes a type and an expression. 
+        // Oskar Mendel 2018-03-27
+private:
+};
+
+class MultExpression : public BinaryExpression {
+public:
+    MultExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class DivideExpression : public BinaryExpression {
+public:
+    DivideExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class ModExpression : public BinaryExpression {
+public:
+    ModExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class AddExpression : public BinaryExpression {
+public:
+    AddExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class SubExpression : public BinaryExpression {
+public:
+    SubExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class ShrExpression : public BinaryExpression {
+public:
+    ShrExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class ShlExpression : public BinaryExpression {
+public:
+    ShlExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class EqualityExpression : public BinaryExpression {
+public:
+    EqualityExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class AndExpression : public BinaryExpression {
+public:
+    AndExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class XorExpression : public BinaryExpression {
+public:
+    XorExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class OrExpression : public BinaryExpression {
+public:
+    OrExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+class LogicalAndExpression : public BinaryExpression {
+public:
+    LogicalAndExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+//TODO: Binary Oskar Mendel 2018-03-23
+class LogicalOrExpression : public BinaryExpression {
+public:
+    LogicalOrExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+
+private:
+};
+
+//TODO: Binary Oskar Mendel 2018-03-23
+class ConditionalExpression : public BinaryExpression {
+public:
+    ConditionalExpression(std::unique_ptr<Expression> cond, 
+        std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+            : BinaryExpression(std::move(LHS), std::move(RHS)), m_cond(std::move(cond)) { }
     
-};
-
-class NotExpression {
-
-};
-
-class ComplementExpression {
-
-};
-
-class NegativeExpression {
-
-};
-
-class PointerExpression {
-
-};
-
-class AddressExpression {
-
-};
-
-class CastExpression {
-
-};
-
-class MultExpression {
-
-};
-
-class DivideExpression {
-
-};
-
-class ModExpression {
-
-};
-
-class AddExpression {
-
-};
-
-class SubExpression {
-
-};
-
-class ShrExpression {
-
-};
-
-class ShlExpression {
-
-};
-
-class EqualityExpression {
-
-};
-
-class AndExpression {
-
-};
-
-class XorExpression {
-
-};
-
-class OrExpression {
-
-};
-
-class LogicalAndExpression {
-
+    std::unique_ptr<Expression> m_cond;
+private:
 };
 
 //TODO: Binary Oskar Mendel 2018-03-23
-class LogicalOrExpression {
-
-};
-
-//TODO: Binary Oskar Mendel 2018-03-23
-class ConditionalExpression {
-
-};
-
-//TODO: Binary Oskar Mendel 2018-03-23
-class AssignExpression {
+class AssignExpression : public BinaryExpression {
 public:
     AssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -155,7 +276,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class AddAssignExpression {
+class AddAssignExpression : public BinaryExpression {
 public:
     AddAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -164,7 +285,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class SubAssignExpression {
+class SubAssignExpression : public BinaryExpression {
 public:
     SubAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -173,7 +294,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class MulAssignExpression {
+class MulAssignExpression : public BinaryExpression {
 public:
     MulAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -182,7 +303,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class DivAssignExpression {
+class DivAssignExpression : public BinaryExpression {
 public:
     DivAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -191,7 +312,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class ModAssignExpression {
+class ModAssignExpression : public BinaryExpression {
 public:
     ModAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -200,7 +321,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class AndAssignExpression {
+class AndAssignExpression : public BinaryExpression {
 public:
     AndAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -209,7 +330,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class OrAssignExpression {
+class OrAssignExpression : public BinaryExpression{
 public:
     OrAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -218,7 +339,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class XorAssignExpression {
+class XorAssignExpression : public BinaryExpression {
 public:
     XorAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -227,7 +348,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class ShlAssignExpression {
+class ShlAssignExpression : public BinaryExpression {
 public:
     ShlAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
@@ -236,7 +357,7 @@ private:
 };
 
 //TODO: Binary Assign? Oskar Mendel 2018-03-23
-class ShrAssignExpression : public BinaryExrepssion {
+class ShrAssignExpression : public BinaryExpression {
 public:
     ShrAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
         : BinaryExpression(std::move(LHS), std::move(RHS)) { }
