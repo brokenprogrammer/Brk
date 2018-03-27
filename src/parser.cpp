@@ -106,7 +106,6 @@ std::unique_ptr<Expression> Parser::parsePostExpression(std::unique_ptr<Expressi
     }
 }
 
-//TODO: Not implemented - Oskar Mendel 2018-03-27
 //TODO: Add keywords
 //TODO: '(' expression ')'
 std::unique_ptr<Expression> Parser::parseUnaryExpression() {
@@ -123,21 +122,24 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
             }
             break;
         case TOKEN_SUBTRACTSUBTRACT:
-            // TODO: Advance Token
-            this->currentToken = this->lexer.getToken();
-            e = parseUnaryExpression();
-            //e = new SubAssignExpression(e, new IntegerExpression(1));
+            {
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e = parseUnaryExpression();
+                std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1)};
+                e = std::unique_ptr<Expression>{new SubAssignExpression(std::move(e), std::move(e1))};
+            }
             break;
         case TOKEN_AND:
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
-            //e = new AddressExpression(e);
+            e = std::unique_ptr<Expression>{new AddressExpression(std::move(e))};
             break;
         case TOKEN_MULTIPLY:
             this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
-            //e = new PointerExpression(e);
+            e = std::unique_ptr<Expression>{new PointerExpression(std::move(e))};
             break;
         case TOKEN_ADD:
             // TODO: Advance Token
@@ -148,13 +150,13 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
-            //e = new NegativeExpression(e);
+            e = std::unique_ptr<Expression>{new NegativeExpression(std::move(e))};
             break;
         case TOKEN_XOR:
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
-            //e = new ComplementExpression(e);
+            e = std::unique_ptr<Expression>{new ComplementExpression(std::move(e))};
             break;
         case TOKEN_NOT:
             // TODO: Advance Token
@@ -172,6 +174,8 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
 }
 
 //TODO: Not implemented - Oskar Mendel 2018-03-27
+//TODO: Implement this when types etc are ready, this might be combined with another function?
+//      Oskar Mendel 2018-03-27
 std::unique_ptr<Expression> Parser::parseCastExpression() {
     std::unique_ptr<Expression> e;
     std::unique_ptr<Expression> e1;
@@ -282,7 +286,6 @@ std::unique_ptr<Expression> Parser::parseShiftExpression() {
     return e;
 }
 
-//TODO: Not implemented - Oskar Mendel 2018-03-27
 std::unique_ptr<Expression> Parser::parseEqualityExpression() {
     std::unique_ptr<Expression> e;
     std::unique_ptr<Expression> e1;
@@ -292,16 +295,18 @@ std::unique_ptr<Expression> Parser::parseEqualityExpression() {
         case TOKEN_ISEQUAL:
         case TOKEN_NOTEQUAL:
             // TODO: Advance Token
-            // e1 = parseShiftExpression();
-            // e = new EqualityExpression(this->currentToken.type, e, e1);
+            this->currentToken = this->lexer.getToken();
+            e1 = parseShiftExpression();
+            e = std::unique_ptr<Expression>{new EqualityExpression(this->currentToken.type, std::move(e), std::move(e1))};
             break;
         case TOKEN_LOWERTHAN:
         case TOKEN_GREATERTHAN:
         case TOKEN_LOWEROREQUALS:
         case TOKEN_GREATEROREQUALS:
             // TODO: Advance Token
-            // e1 = parseShiftExpression();
-            // e = new EqualityExpression(this->currentToken.type, e, e1);
+            this->currentToken = this->lexer.getToken();
+            e1 = parseShiftExpression();
+            e = std::unique_ptr<Expression>{new EqualityExpression(this->currentToken.type, std::move(e), std::move(e1))};
         default:
             break;
     }

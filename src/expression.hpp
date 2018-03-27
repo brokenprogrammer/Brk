@@ -2,7 +2,9 @@
 #define BRK_EXPRESSION_HPP
 
 #include "identifier.hpp"
-#include <memory>
+#include "lexer.hpp" //TODO: Change later when tokens are split into token.hpp
+#include <memory>       // Oskar Mendel 2018-03-27
+
 
 class Expression {
 public:
@@ -209,9 +211,10 @@ private:
 
 class EqualityExpression : public BinaryExpression {
 public:
-    EqualityExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
-        : BinaryExpression(std::move(LHS), std::move(RHS)) { }
+    EqualityExpression(TokenType t_type, std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
+        : BinaryExpression(std::move(LHS), std::move(RHS)), m_type(t_type) { }
 
+    TokenType m_type;
 private:
 };
 
@@ -247,7 +250,6 @@ public:
 private:
 };
 
-//TODO: Binary Oskar Mendel 2018-03-23
 class LogicalOrExpression : public BinaryExpression {
 public:
     LogicalOrExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -256,7 +258,6 @@ public:
 private:
 };
 
-//TODO: Binary Oskar Mendel 2018-03-23
 class ConditionalExpression : public BinaryExpression {
 public:
     ConditionalExpression(std::unique_ptr<Expression> cond, 
@@ -267,7 +268,6 @@ public:
 private:
 };
 
-//TODO: Binary Oskar Mendel 2018-03-23
 class AssignExpression : public BinaryExpression {
 public:
     AssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -276,7 +276,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class AddAssignExpression : public BinaryExpression {
 public:
     AddAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -285,7 +284,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class SubAssignExpression : public BinaryExpression {
 public:
     SubAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -294,7 +292,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class MulAssignExpression : public BinaryExpression {
 public:
     MulAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -303,7 +300,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class DivAssignExpression : public BinaryExpression {
 public:
     DivAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -312,7 +308,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class ModAssignExpression : public BinaryExpression {
 public:
     ModAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -321,7 +316,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class AndAssignExpression : public BinaryExpression {
 public:
     AndAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -330,7 +324,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class OrAssignExpression : public BinaryExpression{
 public:
     OrAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -339,7 +332,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class XorAssignExpression : public BinaryExpression {
 public:
     XorAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -348,7 +340,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class ShlAssignExpression : public BinaryExpression {
 public:
     ShlAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -357,7 +348,6 @@ public:
 private:
 };
 
-//TODO: Binary Assign? Oskar Mendel 2018-03-23
 class ShrAssignExpression : public BinaryExpression {
 public:
     ShrAssignExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
@@ -366,7 +356,6 @@ public:
 private:
 };
 
-//TODO: Binary Oskar Mendel 2018-03-23
 class CommaExpression : public BinaryExpression {
 public:
     CommaExpression(std::unique_ptr<Expression> LHS, std::unique_ptr<Expression> RHS)
