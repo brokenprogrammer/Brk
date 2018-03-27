@@ -41,7 +41,7 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
             this->currentToken = this->lexer.getToken();
             break;
         case TOKEN_FLOATING:
-            e = std::unique_ptr<Expression>{new FloatingExpression(12.2f)};
+            e = std::unique_ptr<Expression>{new FloatingExpression(12.2f)}; //TODO: Oskar Mendel 2018-3-27
             this->currentToken = this->lexer.getToken();
             break;
         case TOKEN_CHAR: //TODO: Oskar Mendel 2018-03-24
@@ -66,15 +66,16 @@ std::unique_ptr<Expression> Parser::parsePostExpression(std::unique_ptr<Expressi
     while(1) {
         switch (this->currentToken.type) {
             case TOKEN_ADDADD:
-                //e = new PostIncrementExpression(e);
+                //e = std::unique_ptr<Expression>{new PostIncrementExpression(std::move(e))};
                 break;
             case TOKEN_SUBTRACTSUBTRACT:
-                //e = new PostDecrementExpression(e);
+                //e = std::unique_ptr<Expression>{new PostDecrementExpression(std::move(e))};
                 break;
             case TOKEN_PERIOD:
                 // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
                 if (this->currentToken.type == TOKEN_IDENTIFIER) {
-                    //e = new DotIdentifierExpression(e, this->currentToken.src);
+                    //e = std::unique_ptr<Expression>{new DotIdentifierExpression(e, this->currentToken.src)};
                 } else {
                     // Error
                 }
@@ -105,40 +106,51 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
 
     switch (this->currentToken.type) {
         case TOKEN_ADDADD:
-            // TODO: Advance Token
-            e = parseUnaryExpression();
-            //e = new AddAssignExpression(e, new IntegerExpression(1));
+            {
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e = parseUnaryExpression();
+                std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1)};
+                e = std::unique_ptr<Expression>{new AddAssignExpression(std::move(e), std::move(e1))};
+            }
             break;
         case TOKEN_SUBTRACTSUBTRACT:
             // TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             //e = new SubAssignExpression(e, new IntegerExpression(1));
             break;
         case TOKEN_AND:
             // TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             //e = new AddressExpression(e);
             break;
         case TOKEN_MULTIPLY:
+            this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             //e = new PointerExpression(e);
             break;
         case TOKEN_ADD:
             // TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             break;
         case TOKEN_SUBTRACT:
             // TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             //e = new NegativeExpression(e);
             break;
         case TOKEN_XOR:
             // TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             //e = new ComplementExpression(e);
             break;
         case TOKEN_NOT:
             // TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             //e = new NotExpression(e);
             break;
@@ -278,8 +290,9 @@ std::unique_ptr<Expression> Parser::parseAndExpression() {
     e = parseEqualityExpression();
     while (this->currentToken.type == TOKEN_AND) {
         //TODO: Advance Token
-        //e1 = parseEqualityExpression();
-        //e = new AndExpression(e, e1);
+        this->currentToken = this->lexer.getToken();
+        e1 = parseEqualityExpression();
+        e = std::unique_ptr<Expression>{new AndExpression(std::move(e), std::move(e1))};
     }
 
     return e;
@@ -292,8 +305,9 @@ std::unique_ptr<Expression> Parser::parseXorExpression() {
     e = parseAndExpression();
     while (this->currentToken.type == TOKEN_XOR) {
         //TODO: Advance Token
-        //e1 = parseAndExpression();
-        //e = new XorExpression(e, e1);
+        this->currentToken = this->lexer.getToken();
+        e1 = parseAndExpression();
+        e = std::unique_ptr<Expression>{new XorExpression(std::move(e), std::move(e1))};
     }
 
     return e;
@@ -306,8 +320,9 @@ std::unique_ptr<Expression> Parser::parseOrExpression() {
     e = parseXorExpression();
     while (this->currentToken.type == TOKEN_OR) {
         //AdvanceToken
-        //e1 = parseXorExpression();
-        //e = new OrExpression(e, e1);
+        this->currentToken = this->lexer.getToken();
+        e1 = parseXorExpression();
+        e = std::unique_ptr<Expression>{new OrExpression(std::move(e), std::move(e1))};
     }
     
     return e;
@@ -320,8 +335,9 @@ std::unique_ptr<Expression> Parser::parseLogicalAndExpression() {
     e = parseOrExpression();
     while (this->currentToken.type == TOKEN_LOGICALAND) {
         //TODO: Advance Token
-        //e1 = parseOrExpression();
-        //e = new LogicalAndExpression(TOKEN_LOGICALAND, e, e1);
+        this->currentToken = this->lexer.getToken();
+        e1 = parseOrExpression();
+        e = std::unique_ptr<Expression>{new LogicalAndExpression(std::move(e), std::move(e1))};
     }
 
     return e;
