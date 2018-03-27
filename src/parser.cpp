@@ -26,6 +26,10 @@ void Parser::parse() {
     }
 }
 
+//TODO: Not implemented - Oskar Mendel 2018-03-27
+// TODO: Primitive types
+// TODO: Null
+// TODO:
 std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
     std::unique_ptr<Expression> e;
 
@@ -61,6 +65,7 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
     return parsePostExpression(std::move(e));
 }
 
+//TODO: Not implemented - Oskar Mendel 2018-03-27
 std::unique_ptr<Expression> Parser::parsePostExpression(std::unique_ptr<Expression> e) {
 
     while(1) {
@@ -101,6 +106,9 @@ std::unique_ptr<Expression> Parser::parsePostExpression(std::unique_ptr<Expressi
     }
 }
 
+//TODO: Not implemented - Oskar Mendel 2018-03-27
+//TODO: Add keywords
+//TODO: '(' expression ')'
 std::unique_ptr<Expression> Parser::parseUnaryExpression() {
     std::unique_ptr<Expression> e;
 
@@ -152,7 +160,7 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
-            //e = new NotExpression(e);
+            e = std::unique_ptr<Expression>{new NotExpression(std::move(e))};
             break;
         //TODO: Add unary keyword "new", "delete" Oskar Mendel 2018-3-24 
         default:
@@ -163,6 +171,7 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
     return e;
 }
 
+//TODO: Not implemented - Oskar Mendel 2018-03-27
 std::unique_ptr<Expression> Parser::parseCastExpression() {
     std::unique_ptr<Expression> e;
     std::unique_ptr<Expression> e1;
@@ -185,25 +194,31 @@ std::unique_ptr<Expression> Parser::parseMultExpression() {
     std::unique_ptr<Expression> e1;
 
     e = parseCastExpression();
-    switch (this->currentToken.type) {
-        case TOKEN_MULTIPLY:
-            // TODO: Advance Token
-            e1 = parseCastExpression();
-            //e = new MultExpression(e, e1);
-            break;
-        case TOKEN_DIVIDE:
-            // TODO: Advance Token
-            e1 = parseCastExpression();
-            //e = new DivideExpression(e, e1);
-            break;
-        case TOKEN_MOD:
-            // TODO: Advance Token
-            e1 = parseCastExpression();
-            //e = new ModExpression(e, e1);
-            break;
+    while(1) {
+        switch (this->currentToken.type) {
+            case TOKEN_MULTIPLY:
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e1 = parseCastExpression();
+                e = std::unique_ptr<Expression>{new MultExpression(std::move(e), std::move(e1))};
+                continue;
+            case TOKEN_DIVIDE:
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e1 = parseCastExpression();
+                e = std::unique_ptr<Expression>{new DivideExpression(std::move(e), std::move(e1))};
+                continue;
+            case TOKEN_MOD:
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e1 = parseCastExpression();
+                e = std::unique_ptr<Expression>{new ModExpression(std::move(e), std::move(e1))};
+               continue;
 
-        default:
-            break;
+            default:
+                break;
+        }
+        break;
     }
 
     return e;
@@ -214,20 +229,25 @@ std::unique_ptr<Expression> Parser::parseAddExpression() {
     std::unique_ptr<Expression> e1;
 
     e = parseMultExpression();
-    switch (this->currentToken.type) {
-        case TOKEN_ADD:
-            // TODO: Advance Token
-            e1 = parseMultExpression();
-            //e = new AddExpression(e, e1);
-            break;
-        case TOKEN_SUBTRACT:
-            // TODO: Advance Token
-            e1 = parseMultExpression();
-            //e = new SubExpression(e, e1);
-            break;
+    while(1) {
+        switch (this->currentToken.type) {
+            case TOKEN_ADD:
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e1 = parseMultExpression();
+                e = std::unique_ptr<Expression>{new AddExpression(std::move(e), std::move(e1))};
+                continue;
+            case TOKEN_SUBTRACT:
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e1 = parseMultExpression();
+                e = std::unique_ptr<Expression>{new SubExpression(std::move(e), std::move(e1))};
+                continue;
 
-        default:
-            break;
+            default:
+                break;
+        }
+        break;
     }
 
     return e;
@@ -238,25 +258,31 @@ std::unique_ptr<Expression> Parser::parseShiftExpression() {
     std::unique_ptr<Expression> e1;
 
     e = parseAddExpression();
-    switch (this->currentToken.type) {
-        case TOKEN_SHIFTLEFT:
-            // TODO: Advance Token
-            // e1 = parseAddExpression();
-            // e = new ShlExpression(e, e1);
-            break;
-        case TOKEN_SHIFTRIGHT:
-            // TODO: Advance Token
-            // e1 = parseAddExpression();
-            // e = new ShrExpression(e, e1);
-            break;
-        
-        default:
-            break;
+    while(1) {
+        switch (this->currentToken.type) {
+            case TOKEN_SHIFTLEFT:
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e1 = parseAddExpression();
+                e = std::unique_ptr<Expression>{new ShlExpression(std::move(e), std::move(e1))};
+                continue;
+            case TOKEN_SHIFTRIGHT:
+                // TODO: Advance Token
+                this->currentToken = this->lexer.getToken();
+                e1 = parseAddExpression();
+                e = std::unique_ptr<Expression>{new ShrExpression(std::move(e), std::move(e1))};
+                continue;
+            
+            default:
+                break;
+        }
+        break;
     }
 
     return e;
 }
 
+//TODO: Not implemented - Oskar Mendel 2018-03-27
 std::unique_ptr<Expression> Parser::parseEqualityExpression() {
     std::unique_ptr<Expression> e;
     std::unique_ptr<Expression> e1;
