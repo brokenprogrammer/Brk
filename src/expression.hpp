@@ -1,10 +1,10 @@
 #ifndef BRK_EXPRESSION_HPP
 #define BRK_EXPRESSION_HPP
 
+#include "globals.hpp"
 #include "identifier.hpp"
 #include "lexer.hpp" //TODO: Change later when tokens are split into token.hpp
 #include <memory>       // Oskar Mendel 2018-03-27
-
 
 class Expression {
 public:
@@ -48,9 +48,11 @@ private:
 
 class IntegerExpression : public Expression {
 public:
-    IntegerExpression(long long t_value) : m_value(t_value) { }
+    IntegerExpression(double t_value) : m_value(t_value) { }
 
-    long long m_value;
+    llvm::Value* codegen();
+
+    double m_value;
 
 private:
 };
