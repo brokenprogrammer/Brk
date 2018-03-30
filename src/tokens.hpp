@@ -1,6 +1,8 @@
 #ifndef BRK_TOKENS_HPP
 #define BRK_TOKENS_HPP
 
+#include "types.hpp"
+#include "identifier.hpp"
 #include <string>
 
 enum TokenType {
@@ -22,8 +24,17 @@ enum TokenType {
     TOKEN_SEMICOLON,
 
     TOKEN_LITERALSTART,
-    TOKEN_INTEGER,
-    TOKEN_FLOATING,
+    TOKEN_UINT8,
+    TOKEN_INT8,
+    TOKEN_UINT16,
+    TOKEN_INT16,
+    TOKEN_UINT32,
+    TOKEN_INT32,
+    TOKEN_UINT64,
+    TOKEN_INT64,
+    TOKEN_FLOAT32,
+    TOKEN_FLOAT64,
+    TOKEN_BYTE,
     TOKEN_CHAR,
     TOKEN_STRING,
     TOKEN_LITERALEND,
@@ -79,9 +90,7 @@ enum TokenType {
 struct TokenValue {
     TokenType type;
     const char* tokenString;
-}
-
-static const Tokens[] {
+} static const Tokens[] {
     {TOKEN_EOF, "EOF"},
     {TOKEN_INVALID, "Invalid"},
     
@@ -100,8 +109,17 @@ static const Tokens[] {
     {TOKEN_SEMICOLON, ";"},
 
     {TOKEN_LITERALSTART, ""},
-    {TOKEN_INTEGER, "Integer"},
-    {TOKEN_FLOATING, "Floating"},
+    {TOKEN_UINT8, "uint8"},
+    {TOKEN_INT8, "int8"},
+    {TOKEN_UINT16, "uint16"},
+    {TOKEN_INT16, "int16"},
+    {TOKEN_UINT32, "uint32"},
+    {TOKEN_INT32, "int32"},
+    {TOKEN_UINT64, "uint64"},
+    {TOKEN_INT64, "int64"},
+    {TOKEN_FLOAT32, "float32"},
+    {TOKEN_FLOAT64, "float64"},
+    {TOKEN_BYTE, "byte"},
     {TOKEN_CHAR, "Char"},
     {TOKEN_STRING, "String"},
     {TOKEN_LITERALEND, ""},
@@ -158,6 +176,26 @@ struct Token {
     TokenType type;
     std::string str;
     //TODO: Token Position within file, used for error handling etc.. - Oskar Mendel 2018-03-18
+
+    //TODO: This generates the following warnings:
+    //  * Anonymous structs are a GNU extension [-Wgnu-anonymous-struct]
+    //  * Anonymous types declared in anonymous union are an extension [-Wnested-anon-types]
+    // Is this something that needs fixing or should the warnings be disabled? Oskar Mendel 2018-03-30
+    union {
+        brk_uint32 uint32Val;
+        brk_int32 int32Val;
+        brk_uint64 uint64Val;
+        brk_int64 int64Val;
+
+        brk_float64 float64Val;
+
+        struct {
+            wchar_t *string;
+            unsigned length;
+        };
+    };
+
+    Identifier* identifier;
 };
 
 #endif //BRK_TOKENS_HPP

@@ -195,7 +195,7 @@ void Lexer::tokenizerStep() {
 Token Lexer::tokenizerScanNumber() {
     Token token = {};
     token.str = this->current_char;
-    token.type = TOKEN_INTEGER;
+    token.type = TOKEN_INT32;
 
     std::string::iterator pos = this->curr;
 
@@ -203,8 +203,8 @@ Token Lexer::tokenizerScanNumber() {
     while(isDigit(current)) {
         this->tokenizerStep();
         if (this->current_char == '.') {
-            if (token.type != TOKEN_FLOATING) {
-                token.type = TOKEN_FLOATING;
+            if (token.type != TOKEN_FLOAT32) {
+                token.type = TOKEN_FLOAT32;
                 this->tokenizerStep();
                 current = this->current_char;
             } else {
