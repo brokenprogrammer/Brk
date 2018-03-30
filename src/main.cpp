@@ -22,8 +22,10 @@ int main (int argc, char **argv)
 
         TheModule = llvm::make_unique<llvm::Module>("Brk", TheContext);
 
-        IntegerExpression e(9);
-        auto ir = e.codegen();
+        std::unique_ptr<Expression> e = std::unique_ptr<Expression>{new IntegerExpression(9)};
+        std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1)};
+        AddExpression b(std::move(e), std::move(e1));
+        auto ir = b.codegen();
         ir->print(llvm::errs(), nullptr);
 
         //Lexer lexer(content);

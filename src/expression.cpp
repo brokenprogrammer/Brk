@@ -59,31 +59,87 @@ llvm::Value* CastExpression::codegen() {
 }
 
 llvm::Value* MultExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
+    return Builder.CreateMul(L, R);
 }
 
 llvm::Value* DivideExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
+    return Builder.CreateUDiv(L, R);
 }
 
 llvm::Value* ModExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
+    return Builder.CreateURem(L, R);
 }
 
 llvm::Value* AddExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
+    return Builder.CreateAdd(L, R);
 }
 
 llvm::Value* SubExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    return Builder.CreateSub(L, R);
 }
 
 llvm::Value* ShrExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
+    //TODO: Create support for logical right shift and left shift. (>>>) in java. Oskar Mendel 2018-03-30
+    return Builder.CreateAShr(L, R);
 }
 
 llvm::Value* ShlExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
+    return Builder.CreateShl(L, R);
 }
 
 llvm::Value* EqualityExpression::codegen() {
