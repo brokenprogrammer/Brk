@@ -1,5 +1,6 @@
 #include "lexer.hpp"
 #include <cctype>
+#include <iostream>
 
 Lexer::Lexer(std::string content) {
     this->content = content;
@@ -9,6 +10,7 @@ Lexer::Lexer(std::string content) {
     if (this->start != this->end) {
         this->current_char = *this->start;
         this->line = this->read_curr = this->curr = this->start;
+        this->read_curr += 1;
         this->line_count = 1;
     }
 
@@ -95,20 +97,24 @@ Token Lexer::getToken() {
             case ';':
                 token.type = TOKEN_SEMICOLON;
                 break;
-            case '\'':
+            case '\'': //TODO before moving from lexer. Oskar Mendel 2018-04-03
                 break;
             case '"':
-                // Such faulty implementation, Doesn't support escaped quotes and 
-                // doesn't react to non terminated string at the end of line.
-                // TODO: Fix whats stated above. - Oskar Mendel 2018-03-19
                 token.type = TOKEN_STRING;
                 while (this->current_char != '"') {
+                    if (this->current_char == '\n' || this->current_char < 0) {
+                        //TODO: Error, string is not terminated. Oskar Mendel 2018-04-03
+                    }
+
+                    //TODO: Doesn't check escape sequence within string. Oskar Mendel 2018-04-03
                     this->tokenizerStep();
                 }
                 
                 token.str = std::string(pos, this->curr+1);
-                this->tokenizerStep();
+                token.string = token.str.c_str();
+                token.length = (this->curr+1) - pos;
 
+                this->tokenizerStep();
                 break;
             case '\\':
                 break;
@@ -286,33 +292,179 @@ void Lexer::tokenizerStep() {
     }
 }
 
-// TODO: This is a trash function for scanning numbers, make it more robust when
-//  scanning floating points numbers and add support for: binary, hex, octal..
-//  Oskar Mendel 2018-03-19
+// TODO: Add support for floating point numbers. Oskar Mendel 2018-04-03
 Token Lexer::tokenizerScanNumber() {
     Token token = {};
     token.str = this->current_char;
     token.type = TOKEN_INT32;
+    int base = 10;
+    brk_int64 n = 0;
+    int d = 0;
 
-    std::string::iterator pos = this->curr;
-
-    char current = this->current_char;
-    while(isDigit(current)) {
+    if (this->current_char == '0') {
         this->tokenizerStep();
-        if (this->current_char == '.') {
-            if (token.type != TOKEN_FLOAT32) {
-                token.type = TOKEN_FLOAT32;
+        switch (this->current_char) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+                n = this->current_char - '0';
                 this->tokenizerStep();
-                current = this->current_char;
-            } else {
-                // Multiple dots were found in the number..
-            }
+                base = 8;
+                break;
+            case 'x':
+            case 'X':
+                this->tokenizerStep();
+                base = 16;
+                break;
+            case 'b':
+            case 'B':
+                this->tokenizerStep();
+                base = 2;
+                break;
         }
-        current = this->current_char;
     }
 
-    token.str = std::string(pos, this->curr);
+    while (1) {
+        switch (this->current_char) {
+            case '0':
+            case '1':
+                d = this->current_char - '0';
+                this->tokenizerStep();
+                break;
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+                if (base == 2) {
+                    //TODO: Error
+                }
+                d = this->current_char - '0';
+                this->tokenizerStep();
+                break;
+            case '8':
+            case '9':
+                if (base < 10) {
+                    //TODO: Error
+                }
+                d = this->current_char - '0';
+                this->tokenizerStep();
+                break;
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+                if (base != 16) {
+                    //TODO: Error
+                }
 
+                if (this->current_char >= 'a') {
+                    d = this->current_char + 10 - 'a';
+                } else {
+                    d = this->current_char + 10 - 'A';
+                }
+
+                this->tokenizerStep();
+                break;
+            default:
+                goto isDone;
+        }
+
+        n = n * base + d;
+    }
+
+isDone:
+    //Parse trailing flags.. 
+    enum FLAGS {
+        FLAGS_NONE = 0,
+        FLAGS_DECIMAL = 1,
+        FLAGS_UNSIGNED = 2,
+        FLAGS_LONG = 4
+    };
+
+    FLAGS flags = (base == 10) ? FLAGS_DECIMAL : FLAGS_NONE;
+    while (1) {
+        unsigned char f;
+        switch (this->current_char) {
+            case 'u':
+            case 'U':
+                f = FLAGS_UNSIGNED;
+                goto L1;
+            case 'l':
+            case 'L':
+                f = FLAGS_LONG;
+            L1:
+                if (flags & f) {
+                    //Error
+                }
+                flags = (FLAGS)(flags | f);
+                this->tokenizerStep();
+                continue;
+            default:
+                break;
+        }
+        break;
+    }
+
+    switch (flags) {
+        case FLAGS_NONE:    // Octal or Hex constant.
+            if (n & 0x8000000000000000L) {
+                token.type = TOKEN_UINT64;
+            } else if (n & 0xFFFFFFFF00000000L) {
+                token.type = TOKEN_INT64;
+            } else if (n & 0x80000000) {
+                token.type = TOKEN_UINT32;
+            } else {
+                token.type = TOKEN_INT32;
+            }
+            break;
+        case FLAGS_DECIMAL:
+            if (n & 0x8000000000000000L) {
+                //TODO: Error handling
+                token.type = TOKEN_UINT64;
+            } else if (n & 0xFFFFFFFF00000000L) {
+                token.type = TOKEN_INT64;
+            } else {
+                token.type = TOKEN_INT32;
+            }
+            break;
+        case FLAGS_UNSIGNED:
+        case FLAGS_DECIMAL | FLAGS_UNSIGNED:
+            if (n & 0xFFFFFFFF00000000L) {
+                token.type = TOKEN_UINT64;
+            } else {
+                token.type = TOKEN_UINT32;
+            }
+            break;
+        case FLAGS_LONG:
+        case FLAGS_DECIMAL | FLAGS_LONG:
+            if (n & 0x8000000000000000) {
+                token.type = TOKEN_UINT64;
+            } else {
+                token.type = TOKEN_INT64;
+            }
+            break;
+        case FLAGS_UNSIGNED | FLAGS_LONG:
+        case FLAGS_DECIMAL | FLAGS_UNSIGNED | FLAGS_LONG:
+            token.type = TOKEN_UINT64;
+            break;
+    }
+
+    token.uint64Val = n;
     return token;
 }
 

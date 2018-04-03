@@ -222,12 +222,13 @@ struct Token {
         brk_float64 float64Val;
 
         struct {
-            wchar_t *string;
+            const char *string;
             unsigned length;
         };
-    };
+    }; //TODO: make use of the union when number of string was found. Oskar Mendel 2018-04-03
 
-    Identifier* identifier;
+    Identifier* identifier; //TODO: Initilize this when identifier is found.
+                                // Oskar Mendel 2018-04-03
 };
 
 #endif //BRK_TOKENS_HPP
