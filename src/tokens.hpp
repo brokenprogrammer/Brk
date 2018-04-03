@@ -84,6 +84,21 @@ enum TokenType {
 
     TOKEN_KEYWORDSTART,
     TOKEN_VOID,
+    TOKEN_EXTERN,
+    TOKEN_CONST,
+    TOKEN_IMPORT,
+    TOKEN_AUTO,
+    TOKEN_IF,
+    TOKEN_ELSE,
+    TOKEN_WHILE,
+    TOKEN_FOR,
+    TOKEN_DO,
+    TOKEN_SWITCH,
+    TOKEN_CASE,
+    TOKEN_DEFAULT,
+    TOKEN_BREAK,
+    TOKEN_CONTINUE,
+    TOKEN_RETURN,
     TOKEN_KEYWORDSEND
 };
 
@@ -108,6 +123,7 @@ struct TokenValue {
     {TOKEN_COLON, ":"},
     {TOKEN_SEMICOLON, ";"},
 
+    //TODO: This should also be keywords. Oskar Mendel 2018-04-03
     {TOKEN_LITERALSTART, ""},
     {TOKEN_UINT8, "uint8"},
     {TOKEN_INT8, "int8"},
@@ -169,6 +185,22 @@ struct TokenValue {
 
     {TOKEN_KEYWORDSTART, ""},
     {TOKEN_VOID, "void"},
+    /* Aggregates (Struct, class, union.. )*/ //TODO: Oskar Mendel 2018-04-03
+    {TOKEN_EXTERN, "extern"},
+    {TOKEN_CONST, "const"},
+    {TOKEN_IMPORT, "import"},
+    {TOKEN_AUTO, "auto"},
+    {TOKEN_IF, "if"},
+    {TOKEN_ELSE, "else"},
+    {TOKEN_WHILE, "while"},
+    {TOKEN_FOR, "for"},
+    {TOKEN_DO, "do"},
+    {TOKEN_SWITCH, "switch"},
+    {TOKEN_CASE, "case"},
+    {TOKEN_DEFAULT, "default"},
+    {TOKEN_BREAK, "break"},
+    {TOKEN_CONTINUE, "continue"},
+    {TOKEN_RETURN, "return"},
     {TOKEN_KEYWORDSEND, ""}
 };
 
