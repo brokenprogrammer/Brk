@@ -61,37 +61,6 @@ Token Lexer::getToken() {
             case EOF:
                 token.type = TOKEN_EOF;
                 break;
-            case '\'':
-                break;
-            case '"':
-                // Such faulty implementation, Doesn't support escaped quotes and 
-                // doesn't react to non terminated string at the end of line.
-                // TODO: Fix whats stated above. - Oskar Mendel 2018-03-19
-                token.type = TOKEN_STRING;
-                while (this->current_char != '"') {
-                    this->tokenizerStep();
-                }
-                
-                token.str = std::string(pos, this->curr+1);
-                this->tokenizerStep();
-
-                break;
-            case '.':
-                // TODO: Period have to have some logic to it in the future. - Oskar Mendel 2018-03-19
-                token.type = TOKEN_PERIOD;
-                break;
-            case ',':
-                token.type = TOKEN_COMMA;
-                break;
-            case '?':
-                token.type = TOKEN_QUESTION;
-                break;
-            case ':':
-                token.type = TOKEN_COLON;
-                break;
-            case ';':
-                token.type = TOKEN_SEMICOLON;
-                break;
             case '(':
                 token.type = TOKEN_OPENPAREN;
                 break;
@@ -110,46 +79,174 @@ Token Lexer::getToken() {
             case ']':
                 token.type = TOKEN_CLOSEBRACKET;
                 break;
+            case '.':
+                // TODO: Period have to have some logic to it in the future. - Oskar Mendel 2018-03-19
+                token.type = TOKEN_PERIOD;
+                break;
+            case ',':
+                token.type = TOKEN_COMMA;
+                break;
+            case '?':
+                token.type = TOKEN_QUESTION;
+                break;
+            case ':':
+                token.type = TOKEN_COLON;
+                break;
+            case ';':
+                token.type = TOKEN_SEMICOLON;
+                break;
+            case '\'':
+                break;
+            case '"':
+                // Such faulty implementation, Doesn't support escaped quotes and 
+                // doesn't react to non terminated string at the end of line.
+                // TODO: Fix whats stated above. - Oskar Mendel 2018-03-19
+                token.type = TOKEN_STRING;
+                while (this->current_char != '"') {
+                    this->tokenizerStep();
+                }
+                
+                token.str = std::string(pos, this->curr+1);
+                this->tokenizerStep();
+
+                break;
             case '\\':
-                break;
-            case '<':
-                break;
-            case '>':
-                break;
-            case '_':
-                break;
-            case '$':
-                break;
-            case '%':
-                break;
-            case '#':
-                break;
-            case '&':
-                break;
-            case '^':
-                break;
-            case '!':
-                break;
-            case '*':
-                break;
-            case '/':
                 break;
             case '+':
                 token.type = TOKEN_ADD;
-                if (this->current_char == '=') {
+                if (this->current_char == '+') {
+                    token.type = TOKEN_ADDADD;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
                     token.type = TOKEN_ADDEQUAL;
                     this->tokenizerStep();
                     token.str = std::string(pos, this->curr);
                 }
                 break;
             case '-':
+                token.type = TOKEN_SUBTRACT;
+                if (this->current_char == '-') {
+                    token.type = TOKEN_SUBTRACTSUBTRACT;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_SUBTRACTEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
-            case '|':
+            case '*':
+                token.type = TOKEN_MULTIPLY;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_MULTIPLYEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
-            case '~':
+            case '/':
+                token.type = TOKEN_DIVIDE;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_DIVIDEEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '%':
+                token.type = TOKEN_MOD;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_MODEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
             case '=':
                 token.type = TOKEN_EQUAL;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_ISEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '!':
+                token.type = TOKEN_NOT;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_NOTEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '#':
+                token.type = TOKEN_HASH;
+                break;
+            case '$':
+                token.type = TOKEN_DOLLAR;
+                break;
+            case '&':
+                token.type = TOKEN_AND;
+                if (this->current_char == '&') {
+                    token.type = TOKEN_LOGICALAND;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_ANDEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '|':
+                token.type = TOKEN_OR;
+                if (this->current_char == '|') {
+                    token.type = TOKEN_LOGICALOR;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_OREQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '~':
+                token.type = TOKEN_XOR;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_XOREQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '<':
+                token.type = TOKEN_LOWERTHAN;
+                if (this->current_char == '<') {
+                    token.type = TOKEN_SHIFTLEFT;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    if (this->current_char == '=') {
+                        token.type = TOKEN_SHIFTLEFTEQUAL;
+                        this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    }
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_LOWEROREQUALS;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '>':
+                token.type = TOKEN_GREATERTHAN;
+                if (this->current_char == '>') {
+                    token.type = TOKEN_SHIFTRIGHT;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    if (this->current_char == '=') {
+                        token.type = TOKEN_SHIFTRIGHTEQUAL;
+                        this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    }
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_GREATEROREQUALS;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
             default:
                 token.type = TOKEN_INVALID;
