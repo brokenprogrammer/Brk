@@ -15,6 +15,7 @@ public:
 private:
     void tokenizerStep();   //TODO: Find a better name for this. - Oskar Mendel 2018-03-18
     Token tokenizerScanNumber();
+    Token tokenizerScanRealNumber();
     void skipWhitespace();
 
     bool isLetter(char c);

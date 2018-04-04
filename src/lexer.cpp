@@ -468,6 +468,13 @@ isDone:
     return token;
 }
 
+//TODO: Implement this and add usage of this in ScanNumber() Oskar Mendel 2018-04-04
+Token Lexer::tokenizerScanRealNumber() {
+    Token token = {};
+
+    return token;
+}
+
 void Lexer::skipWhitespace() {
     while (this->current_char == ' '  ||
            this->current_char == '\t' ||
