@@ -301,7 +301,7 @@ Token Lexer::tokenizerScanNumber() {
     token.str = this->current_char;
     token.type = TOKEN_INT32;
     int base = 10;
-    brk_int64 n = 0;
+    brk_uint64 n = 0;
     int d = 0;
 
     if (this->current_char == '0') {

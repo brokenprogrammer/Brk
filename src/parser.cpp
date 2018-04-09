@@ -41,7 +41,7 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
             this->currentToken = this->lexer.getToken();
             break;
         case TOKEN_INT32:
-            e = std::unique_ptr<Expression>{new IntegerExpression(stoi(this->currentToken.str))};
+            e = std::unique_ptr<Expression>{new IntegerExpression(this->currentToken.uint64Val)};
             this->currentToken = this->lexer.getToken();
             break;
         case TOKEN_FLOAT32:
