@@ -21,7 +21,9 @@ void Parser::parse() {
         // isFunction() TODO: Oskar Mendel 2018-03-22
         break;
     default:
-        this->parseExpression();
+        std::unique_ptr<Expression> e = this->parseExpression();
+        auto ir = e->codegen();
+        ir->print(llvm::errs(), nullptr);
         break;
     }
 }

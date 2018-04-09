@@ -22,22 +22,29 @@ int main (int argc, char **argv)
 
         TheModule = llvm::make_unique<llvm::Module>("Brk", TheContext);
 
-        std::unique_ptr<Expression> e = std::unique_ptr<Expression>{new IntegerExpression(9)};
-        std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1)};
-        AddExpression b(std::move(e), std::move(e1));
-        auto ir = b.codegen();
-        ir->print(llvm::errs(), nullptr);
 
-        //Lexer lexer(content);
+        // std::unique_ptr<Expression> e = std::unique_ptr<Expression>{new IntegerExpression(9)};
+        // std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1)};
+        // AddExpression b(std::move(e), std::move(e1));
+        // auto ir = b.codegen();
+        // ir->print(llvm::errs(), nullptr);
+
+        Lexer lexer(content);
         //Parser parser(content);
         //parser.parse();
-        //Token t = lexer.getToken();
-        //std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
+        //parser.parse();
+        
+        Token t = lexer.getToken();
+        std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
         //
-        //while(t.type != TOKEN_EOF) {
-        //    t = lexer.getToken();
-        //    std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
-        //}
+        while(t.type != TOKEN_EOF) {
+            t = lexer.getToken();
+            if (t.type == TOKEN_FLOAT64) {
+                std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.float64Val << std::endl;
+            } else {
+                std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
+            }
+        }
     }
 
     return 0;
