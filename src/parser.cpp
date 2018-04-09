@@ -40,11 +40,11 @@ std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
             e = std::unique_ptr<Expression>{new IdentifierExpression(this->currentToken.str)};
             this->currentToken = this->lexer.getToken();
             break;
-        case TOKEN_INTEGER:
+        case TOKEN_INT32:
             e = std::unique_ptr<Expression>{new IntegerExpression(stoi(this->currentToken.str))};
             this->currentToken = this->lexer.getToken();
             break;
-        case TOKEN_FLOATING:
+        case TOKEN_FLOAT32:
             e = std::unique_ptr<Expression>{new FloatingExpression(12.2f)}; //TODO: Oskar Mendel 2018-3-27
             this->currentToken = this->lexer.getToken();
             break;
