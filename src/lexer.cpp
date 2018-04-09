@@ -292,8 +292,11 @@ void Lexer::tokenizerStep() {
     }
 }
 
-// TODO: Add support for floating point numbers. Oskar Mendel 2018-04-03
 Token Lexer::tokenizerScanNumber() {
+    std::string::iterator nCurr = this->curr;   //TODO: Is there a better way to store theese? Oskar Mendel 2018-04-09
+    std::string::iterator nRead_curr = this->read_curr;
+    std::string::iterator nLine = this->line;
+    char nCurrent_char = this->current_char;
     Token token = {};
     token.str = this->current_char;
     token.type = TOKEN_INT32;
@@ -380,6 +383,12 @@ Token Lexer::tokenizerScanNumber() {
 
                 this->tokenizerStep();
                 break;
+            case '.':
+                this->curr = nCurr;
+                this->read_curr = nRead_curr;
+                this->line = nLine;
+                this->current_char = nCurrent_char;
+                return tokenizerScanRealNumber();
             default:
                 goto isDone;
         }
@@ -468,9 +477,53 @@ isDone:
     return token;
 }
 
-//TODO: Implement this and add usage of this in ScanNumber() Oskar Mendel 2018-04-04
 Token Lexer::tokenizerScanRealNumber() {
     Token token = {};
+    std::string c = "";
+
+    // Digits left of '.'
+    while(1) {
+        if (this->current_char == '.') {
+            c += this->current_char;
+            this->tokenizerStep();
+            break;
+        }
+
+        if (isDigit(this->current_char)) {
+            c += this->current_char;
+            this->tokenizerStep();
+            continue;
+        }
+
+        break;
+    }
+
+    //Digits right of '.'
+    while(1) {
+        if (isDigit(this->current_char)) {
+            c += this->current_char;
+            this->tokenizerStep();
+            continue;
+        }
+
+        break;
+    }
+
+    //TODO: If scientific notation should be added it can be added here.. Oskar Mendel 2018-04-09
+
+    switch(this->current_char) {
+        case 'f':
+        case 'F':
+            token.float64Val = std::stof(c);
+            token.type = TOKEN_FLOAT32;
+            this->tokenizerStep();
+            break;
+        default:
+            token.float64Val = std::stod(c);
+            token.type = TOKEN_FLOAT64;
+            this->tokenizerStep();
+            break;
+    }
 
     return token;
 }
