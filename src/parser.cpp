@@ -421,6 +421,7 @@ std::unique_ptr<Expression> Parser::parseConditionalExpression() {
         if (!(this->currentToken.type == TOKEN_COLON)) {
             // Error
         }
+        this->currentToken = this->lexer.getToken();
         e2 = parseConditionalExpression();
         e = std::unique_ptr<Expression>{new ConditionalExpression(std::move(e), std::move(e1), std::move(e2))};
     }

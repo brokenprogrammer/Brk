@@ -339,7 +339,34 @@ llvm::Value* LogicalOrExpression::codegen() {
 }
 
 llvm::Value* ConditionalExpression::codegen() {
-    return nullptr;
+    llvm::Value* Cond = this->m_cond->codegen();
+
+    if (!Cond) {
+        return nullptr;
+    }
+
+    if (!Cond->getType()->isFloatingPointTy()) {
+        //TODO: Convert L to floating. Oskar Mendel 2018-04-10
+    }
+
+    Cond = Builder.CreateFCmpONE(Cond, llvm::ConstantFP::get(TheContext, llvm::APFloat(0.0)));
+    if (llvm::dyn_cast<llvm::ConstantInt>(Cond)->getValue().getBoolValue()) {
+        llvm::Value* L = this->LHS->codegen();
+
+        if (!L) {
+            return nullptr;
+        }
+
+        return L;
+    } else {
+        llvm::Value* R = this->RHS->codegen();
+
+        if (!R) {
+            return nullptr;
+        }
+
+        return R;
+    }
 }
 
 llvm::Value* AssignExpression::codegen() {
