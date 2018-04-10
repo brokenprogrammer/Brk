@@ -240,15 +240,51 @@ llvm::Value* EqualityExpression::codegen() {
 }
 
 llvm::Value* AndExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        //TODO: Error or not supported? Oskar Mendel 2018-04-10
+        return nullptr;
+    } else {
+        return Builder.CreateAnd(L, R);
+    }
 }
 
 llvm::Value* XorExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        //TODO: Error or not supported? Oskar Mendel 2018-04-10
+        return nullptr;
+    } else {
+        return Builder.CreateXor(L, R);
+    }
 }
 
 llvm::Value* OrExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        //TODO: Error or not supported? Oskar Mendel 2018-04-10
+        return nullptr;
+    } else {
+        return Builder.CreateOr(L, R);
+    }
 }
 
 llvm::Value* LogicalAndExpression::codegen() {

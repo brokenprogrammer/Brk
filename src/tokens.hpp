@@ -154,7 +154,7 @@ struct TokenValue {
     {TOKEN_DOLLAR, "$"},
     {TOKEN_AND, "&"},
     {TOKEN_OR, "|"},
-    {TOKEN_XOR, "~"},
+    {TOKEN_XOR, "~"},   //TODO: Xor should be '^' and ~ should be used for complement. Oskar Mendel 2018-04-10
     {TOKEN_SHIFTLEFT, "<<"},
     {TOKEN_SHIFTRIGHT, ">>"},
     {TOKEN_OPERATOREND, ""},
