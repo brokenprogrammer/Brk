@@ -5,13 +5,26 @@ llvm::Value* IdentifierExpression::codegen() {
 }
 
 llvm::Value* IntegerExpression::codegen() {
-    //TODO: Add support for different bit sizes for ints when types are implemented.
-        // Oskar Mendel 2018-03-30
-     return llvm::ConstantInt::get(TheContext, llvm::APInt(64, this->m_value, true));
+    switch(this->m_type) {
+        case TOKEN_UINT32:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(32, this->m_value, false));
+        case TOKEN_INT32:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(32, this->m_value, true));
+        case TOKEN_UINT64:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(64, this->m_value, false));
+        case TOKEN_INT64:
+            return llvm::ConstantInt::get(TheContext, llvm::APInt(64, this->m_value, true));
+        default:
+            return nullptr;
+    }
 }
 
 llvm::Value* FloatingExpression::codegen() {
-    return llvm::ConstantFP::get(TheContext, llvm::APFloat(this->m_value));;
+    if (this->m_isFloat) {
+        return llvm::ConstantFP::get(TheContext, llvm::APFloat(this->m_value.m_float));
+    } else {
+        return llvm::ConstantFP::get(TheContext, llvm::APFloat(this->m_value.m_double));
+    }
 }
 
 llvm::Value* StringExpression::codegen() {

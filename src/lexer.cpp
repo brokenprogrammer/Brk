@@ -473,7 +473,7 @@ isDone:
             break;
     }
 
-    token.uint64Val = n;
+    token.int64Val = n;
     return token;
 }
 

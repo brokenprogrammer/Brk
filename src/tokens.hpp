@@ -217,7 +217,7 @@ struct Token {
         //brk_uint32 uint32Val; //Theese three might not be needed.
         //brk_int32 int32Val;
         //brk_int64 int64Val;
-        brk_uint64 uint64Val;
+        brk_uint64 int64Val;
 
         brk_float64 float64Val;
 

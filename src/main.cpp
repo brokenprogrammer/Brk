@@ -29,22 +29,22 @@ int main (int argc, char **argv)
         // auto ir = b.codegen();
         // ir->print(llvm::errs(), nullptr);
 
-        Lexer lexer(content);
-        //Parser parser(content);
-        //parser.parse();
-        //parser.parse();
+        //Lexer lexer(content);
+        Parser parser(content);
+        parser.parse();
+        parser.parse();
         
-        Token t = lexer.getToken();
-        std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
-        //
-        while(t.type != TOKEN_EOF) {
-            t = lexer.getToken();
-            if (t.type == TOKEN_FLOAT64) {
-                std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.float64Val << std::endl;
-            } else {
-                std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
-            }
-        }
+        // Token t = lexer.getToken();
+        // std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
+        // //
+        // while(t.type != TOKEN_EOF) {
+        //     t = lexer.getToken();
+        //     if (t.type == TOKEN_FLOAT64) {
+        //         std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.float64Val << std::endl;
+        //     } else {
+        //         std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
+        //     }
+        // }
     }
 
     return 0;

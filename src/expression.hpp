@@ -53,22 +53,27 @@ private:
 
 class IntegerExpression : public Expression {
 public:
-    IntegerExpression(long long t_value) : m_value(t_value) { }
+    IntegerExpression(long long t_value, TokenType t_type) : m_value(t_value), m_type(t_type) { }
 
     llvm::Value* codegen() override;
 
     long long m_value;
-
+    TokenType m_type;
 private:
 };
 
 class FloatingExpression : public Expression {
 public:
-    FloatingExpression(double t_value) : m_value(t_value) { }
+    FloatingExpression(double t_value) : m_isFloat(false) { m_value.m_double = t_value; }
+    FloatingExpression(float t_value) : m_isFloat(true) { m_value.m_float = t_value; }
 
     llvm::Value* codegen() override;
 
-    double m_value;
+    union {
+        double m_double;
+        float m_float;
+    } m_value;
+    bool m_isFloat = false;
 private:
 };
 
