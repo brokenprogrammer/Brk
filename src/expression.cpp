@@ -183,6 +183,10 @@ llvm::Value* EqualityExpression::codegen() {
     llvm::Value* L = this->LHS->codegen();
     llvm::Value* R = this->RHS->codegen();
 
+    if (!L || !R) {
+        return nullptr;
+    }
+
     //TODO: If one of L & R is floating and other is integer the R have to be converted to same as the L. Oskar Mendel 2018-04-10
 
     switch(this->m_type) {
@@ -252,7 +256,29 @@ llvm::Value* LogicalAndExpression::codegen() {
 }
 
 llvm::Value* LogicalOrExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    if (!L->getType()->isFloatingPointTy()) {
+        //TODO: Convert L to floating. Oskar Mendel 2018-04-10
+    }
+
+    L = Builder.CreateFCmpONE(L, llvm::ConstantFP::get(TheContext, llvm::APFloat(0.0)));
+    if (llvm::dyn_cast<llvm::ConstantInt>(L)->getValue().getBoolValue()) {
+        return L;
+    } else {
+
+        if (!R->getType()->isFloatingPointTy()) {
+            //TODO: Convert L to floating. Oskar Mendel 2018-04-10
+        }
+
+        R = Builder.CreateFCmpONE(R, llvm::ConstantFP::get(TheContext, llvm::APFloat(0.0)));
+        return R;
+    }
 }
 
 llvm::Value* ConditionalExpression::codegen() {
