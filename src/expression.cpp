@@ -79,8 +79,11 @@ llvm::Value* MultExpression::codegen() {
         return nullptr;
     }
 
-    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
-    return Builder.CreateMul(L, R);
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        return Builder.CreateFMul(L, R);
+    } else {
+        return Builder.CreateMul(L, R);
+    }
 }
 
 llvm::Value* DivideExpression::codegen() {
@@ -91,8 +94,11 @@ llvm::Value* DivideExpression::codegen() {
         return nullptr;
     }
 
-    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
-    return Builder.CreateUDiv(L, R);
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        return Builder.CreateFDiv(L, R);
+    } else {
+        return Builder.CreateUDiv(L, R);
+    }
 }
 
 llvm::Value* ModExpression::codegen() {
@@ -103,8 +109,11 @@ llvm::Value* ModExpression::codegen() {
         return nullptr;
     }
 
-    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
-    return Builder.CreateURem(L, R);
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        return Builder.CreateFRem(L, R);
+    } else {
+        return Builder.CreateURem(L, R);
+    }
 }
 
 llvm::Value* AddExpression::codegen() {
@@ -115,8 +124,11 @@ llvm::Value* AddExpression::codegen() {
         return nullptr;
     }
 
-    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
-    return Builder.CreateAdd(L, R);
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        return Builder.CreateFAdd(L, R);
+    } else {
+        return Builder.CreateAdd(L, R);
+    }
 }
 
 llvm::Value* SubExpression::codegen() {
@@ -127,7 +139,11 @@ llvm::Value* SubExpression::codegen() {
         return nullptr;
     }
 
-    return Builder.CreateSub(L, R);
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        return Builder.CreateFSub(L, R);
+    } else {
+        return Builder.CreateSub(L, R);
+    }
 }
 
 llvm::Value* ShrExpression::codegen() {
@@ -138,9 +154,13 @@ llvm::Value* ShrExpression::codegen() {
         return nullptr;
     }
 
-    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
     //TODO: Create support for logical right shift and left shift. (>>>) in java. Oskar Mendel 2018-03-30
-    return Builder.CreateAShr(L, R);
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        //TODO: Error or not supported? Oskar Mendel 2018-04-10
+        return nullptr;
+    } else {
+        return Builder.CreateAShr(L, R);
+    }
 }
 
 llvm::Value* ShlExpression::codegen() {
@@ -151,8 +171,12 @@ llvm::Value* ShlExpression::codegen() {
         return nullptr;
     }
 
-    //TODO: Create depending on underlying types, different for float etc.. Oskar Mendel 2018-03-30
-    return Builder.CreateShl(L, R);
+    if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+        //TODO: Error or not supported? Oskar Mendel 2018-04-10
+        return nullptr;
+    } else {
+        return Builder.CreateShl(L, R);
+    }
 }
 
 llvm::Value* EqualityExpression::codegen() {

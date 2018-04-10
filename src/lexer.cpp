@@ -521,7 +521,6 @@ Token Lexer::tokenizerScanRealNumber() {
         default:
             token.float64Val = std::stod(c);
             token.type = TOKEN_FLOAT64;
-            this->tokenizerStep();
             break;
     }
 

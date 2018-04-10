@@ -24,6 +24,7 @@ void Parser::parse() {
         std::unique_ptr<Expression> e = this->parseExpression();
         auto ir = e->codegen();
         ir->print(llvm::errs(), nullptr);
+        std::cout << std::endl;
         break;
     }
 }
