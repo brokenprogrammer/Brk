@@ -187,8 +187,18 @@ llvm::Value* EqualityExpression::codegen() {
 
     switch(this->m_type) {
         case TOKEN_ISEQUAL:
+            if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+                return Builder.CreateFCmpUEQ(L, R);
+            } else {
+                return Builder.CreateICmpEQ(L, R);
+            }
             break;
         case TOKEN_NOTEQUAL:
+            if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+                return Builder.CreateFCmpUNE(L, R);
+            } else {
+                return Builder.CreateICmpNE(L, R);
+            }
             break;
         case TOKEN_LOWERTHAN:
             if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
@@ -197,14 +207,31 @@ llvm::Value* EqualityExpression::codegen() {
                 return Builder.CreateICmpULT(L, R);
             }
         case TOKEN_GREATERTHAN:
+            if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+                return Builder.CreateFCmpUGT(L, R);
+            } else {
+                return Builder.CreateICmpUGT(L, R);
+            }
             break;
         case TOKEN_LOWEROREQUALS:
+            if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+                return Builder.CreateFCmpULE(L, R);
+            } else {
+                return Builder.CreateICmpULE(L, R);
+            }
             break;
         case TOKEN_GREATEROREQUALS:
+            if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+                return Builder.CreateFCmpUGE(L, R);
+            } else {
+                return Builder.CreateICmpUGE(L, R);
+            }
             break;
         default:
+            //TODO: Error or not supported? Oskar Mendel 2018-04-10
             break;
     }
+
     return nullptr;
 }
 
