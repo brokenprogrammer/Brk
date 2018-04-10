@@ -252,7 +252,28 @@ llvm::Value* OrExpression::codegen() {
 }
 
 llvm::Value* LogicalAndExpression::codegen() {
-    return nullptr;
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    if (!L || !R) {
+        return nullptr;
+    }
+
+    if (!L->getType()->isFloatingPointTy()) {
+        //TODO: Convert L to floating. Oskar Mendel 2018-04-10
+    }
+
+    if (!R->getType()->isFloatingPointTy()) {
+        //TODO: Convert L to floating. Oskar Mendel 2018-04-10
+    }
+
+    L = Builder.CreateFCmpONE(L, llvm::ConstantFP::get(TheContext, llvm::APFloat(0.0)));
+    if (!llvm::dyn_cast<llvm::ConstantInt>(L)->getValue().getBoolValue()) {
+        return L;
+    }
+    
+    R = Builder.CreateFCmpONE(R, llvm::ConstantFP::get(TheContext, llvm::APFloat(0.0)));
+    return R;
 }
 
 llvm::Value* LogicalOrExpression::codegen() {
