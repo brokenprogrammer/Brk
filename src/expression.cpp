@@ -15,7 +15,7 @@ llvm::Value* IntegerExpression::codegen() {
         case TOKEN_INT64:
             return llvm::ConstantInt::get(TheContext, llvm::APInt(64, this->m_value, true));
         default:
-            return nullptr;
+            return nullptr; //TODO: Error logging or something similar? Oskar Mendel 2018-04-10
     }
 }
 
@@ -180,6 +180,31 @@ llvm::Value* ShlExpression::codegen() {
 }
 
 llvm::Value* EqualityExpression::codegen() {
+    llvm::Value* L = this->LHS->codegen();
+    llvm::Value* R = this->RHS->codegen();
+
+    //TODO: If one of L & R is floating and other is integer the R have to be converted to same as the L. Oskar Mendel 2018-04-10
+
+    switch(this->m_type) {
+        case TOKEN_ISEQUAL:
+            break;
+        case TOKEN_NOTEQUAL:
+            break;
+        case TOKEN_LOWERTHAN:
+            if (L->getType()->isFloatingPointTy() || R->getType()->isFloatingPointTy()) {
+                return Builder.CreateFCmpULT(L, R);
+            } else {
+                return Builder.CreateICmpULT(L, R);
+            }
+        case TOKEN_GREATERTHAN:
+            break;
+        case TOKEN_LOWEROREQUALS:
+            break;
+        case TOKEN_GREATEROREQUALS:
+            break;
+        default:
+            break;
+    }
     return nullptr;
 }
 

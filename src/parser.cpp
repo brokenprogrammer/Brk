@@ -307,13 +307,16 @@ std::unique_ptr<Expression> Parser::parseEqualityExpression() {
     std::unique_ptr<Expression> e1;
 
     e = parseShiftExpression();
+
+    TokenType type = this->currentToken.type;
+
     switch(this->currentToken.type) {
         case TOKEN_ISEQUAL:
         case TOKEN_NOTEQUAL:
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e1 = parseShiftExpression();
-            e = std::unique_ptr<Expression>{new EqualityExpression(this->currentToken.type, std::move(e), std::move(e1))};
+            e = std::unique_ptr<Expression>{new EqualityExpression(type, std::move(e), std::move(e1))};
             break;
         case TOKEN_LOWERTHAN:
         case TOKEN_GREATERTHAN:
@@ -322,7 +325,7 @@ std::unique_ptr<Expression> Parser::parseEqualityExpression() {
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e1 = parseShiftExpression();
-            e = std::unique_ptr<Expression>{new EqualityExpression(this->currentToken.type, std::move(e), std::move(e1))};
+            e = std::unique_ptr<Expression>{new EqualityExpression(type, std::move(e), std::move(e1))};
         default:
             break;
     }
