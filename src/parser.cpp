@@ -22,6 +22,10 @@ void Parser::parse() {
         break;
     default:
         std::unique_ptr<Expression> e = this->parseExpression();
+        std::cout << "We get here without breaking" << std::endl;
+        if (e == nullptr) {
+            std::cout << "we got null" << std::endl;
+        }
         auto ir = e->codegen();
         ir->print(llvm::errs(), nullptr);
         std::cout << std::endl;
@@ -179,6 +183,15 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
             this->currentToken = this->lexer.getToken();
             e = parseUnaryExpression();
             e = std::unique_ptr<Expression>{new NotExpression(std::move(e))};
+            break;
+        case TOKEN_OPENPAREN:
+            //TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
+            e = parseExpression();
+            if (!(this->currentToken.type == TOKEN_CLOSEPAREN)) {
+                //Error
+            }
+            this->currentToken = this->lexer.getToken();
             break;
         //TODO: Add unary keyword "new", "delete" Oskar Mendel 2018-3-24 
         default:
