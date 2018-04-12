@@ -22,10 +22,6 @@ void Parser::parse() {
         break;
     default:
         std::unique_ptr<Expression> e = this->parseExpression();
-        std::cout << "We get here without breaking" << std::endl;
-        if (e == nullptr) {
-            std::cout << "we got null" << std::endl;
-        }
         auto ir = e->codegen();
         ir->print(llvm::errs(), nullptr);
         std::cout << std::endl;
@@ -211,9 +207,10 @@ std::unique_ptr<Expression> Parser::parseCastExpression() {
 
     if (this->currentToken.type == TOKEN_OPENPAREN) {
         // TODO: Advance Token
+        // PEEK and find typename else just parse unary expression. 
         //e = parseType();
         // verify current token is ')'
-        e1 = parseUnaryExpression();
+        e = parseUnaryExpression();
         //e = new CastExpression(e, e1);
     } else {
         e = parseUnaryExpression();
