@@ -21,31 +21,47 @@ void Parser::parse() {
         // isFunction() TODO: Oskar Mendel 2018-03-22
         break;
     default:
-        this->parseExpression();
+        std::unique_ptr<Expression> e = this->parseExpression();
+        auto ir = e->codegen();
+        ir->print(llvm::errs(), nullptr);
+        std::cout << std::endl;
         break;
     }
 }
 
 //TODO: Not implemented - Oskar Mendel 2018-03-27
-// TODO: Primitive types
 // TODO: Null
 // TODO:
 std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
     std::unique_ptr<Expression> e;
 
-    //TODO: Add all the primitive types expected, example: uint8 uint16 uint32.. int8.. 
-        // Oskar Mendel 2018-03-24
     switch(this->currentToken.type) {
         case TOKEN_IDENTIFIER:
             e = std::unique_ptr<Expression>{new IdentifierExpression(this->currentToken.str)};
             this->currentToken = this->lexer.getToken();
             break;
-        case TOKEN_INTEGER:
-            e = std::unique_ptr<Expression>{new IntegerExpression(stoi(this->currentToken.str))};
+        case TOKEN_UINT32:
+            e = std::unique_ptr<Expression>{new IntegerExpression(this->currentToken.int64Val, TOKEN_UINT32)};
             this->currentToken = this->lexer.getToken();
             break;
-        case TOKEN_FLOATING:
-            e = std::unique_ptr<Expression>{new FloatingExpression(12.2f)}; //TODO: Oskar Mendel 2018-3-27
+        case TOKEN_INT32:
+            e = std::unique_ptr<Expression>{new IntegerExpression(this->currentToken.int64Val, TOKEN_INT32)};
+            this->currentToken = this->lexer.getToken();
+            break;
+        case TOKEN_UINT64:
+            e = std::unique_ptr<Expression>{new IntegerExpression(this->currentToken.int64Val, TOKEN_UINT64)};
+            this->currentToken = this->lexer.getToken();
+            break;
+        case TOKEN_INT64:
+            e = std::unique_ptr<Expression>{new IntegerExpression(this->currentToken.int64Val, TOKEN_INT64)};
+            this->currentToken = this->lexer.getToken();
+            break;
+        case TOKEN_FLOAT32:
+            e = std::unique_ptr<Expression>{new FloatingExpression((float)this->currentToken.float64Val)};
+            this->currentToken = this->lexer.getToken();
+            break;
+        case TOKEN_FLOAT64:
+            e = std::unique_ptr<Expression>{new FloatingExpression(this->currentToken.float64Val)};
             this->currentToken = this->lexer.getToken();
             break;
         case TOKEN_CHAR: //TODO: Oskar Mendel 2018-03-24
@@ -117,7 +133,7 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
                 // TODO: Advance Token
                 this->currentToken = this->lexer.getToken();
                 e = parseUnaryExpression();
-                std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1)};
+                std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1, TOKEN_UINT32)};
                 e = std::unique_ptr<Expression>{new AddAssignExpression(std::move(e), std::move(e1))};
             }
             break;
@@ -126,7 +142,7 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
                 // TODO: Advance Token
                 this->currentToken = this->lexer.getToken();
                 e = parseUnaryExpression();
-                std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1)};
+                std::unique_ptr<Expression> e1 = std::unique_ptr<Expression>{new IntegerExpression(1, TOKEN_UINT32)};
                 e = std::unique_ptr<Expression>{new SubAssignExpression(std::move(e), std::move(e1))};
             }
             break;
@@ -164,6 +180,15 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
             e = parseUnaryExpression();
             e = std::unique_ptr<Expression>{new NotExpression(std::move(e))};
             break;
+        case TOKEN_OPENPAREN:
+            //TODO: Advance Token
+            this->currentToken = this->lexer.getToken();
+            e = parseExpression();
+            if (!(this->currentToken.type == TOKEN_CLOSEPAREN)) {
+                //Error
+            }
+            this->currentToken = this->lexer.getToken();
+            break;
         //TODO: Add unary keyword "new", "delete" Oskar Mendel 2018-3-24 
         default:
             e = parsePrimaryExpression();
@@ -182,9 +207,10 @@ std::unique_ptr<Expression> Parser::parseCastExpression() {
 
     if (this->currentToken.type == TOKEN_OPENPAREN) {
         // TODO: Advance Token
+        // PEEK and find typename else just parse unary expression. 
         //e = parseType();
         // verify current token is ')'
-        e1 = parseUnaryExpression();
+        e = parseUnaryExpression();
         //e = new CastExpression(e, e1);
     } else {
         e = parseUnaryExpression();
@@ -291,13 +317,16 @@ std::unique_ptr<Expression> Parser::parseEqualityExpression() {
     std::unique_ptr<Expression> e1;
 
     e = parseShiftExpression();
+
+    TokenType type = this->currentToken.type;
+
     switch(this->currentToken.type) {
         case TOKEN_ISEQUAL:
         case TOKEN_NOTEQUAL:
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e1 = parseShiftExpression();
-            e = std::unique_ptr<Expression>{new EqualityExpression(this->currentToken.type, std::move(e), std::move(e1))};
+            e = std::unique_ptr<Expression>{new EqualityExpression(type, std::move(e), std::move(e1))};
             break;
         case TOKEN_LOWERTHAN:
         case TOKEN_GREATERTHAN:
@@ -306,7 +335,7 @@ std::unique_ptr<Expression> Parser::parseEqualityExpression() {
             // TODO: Advance Token
             this->currentToken = this->lexer.getToken();
             e1 = parseShiftExpression();
-            e = std::unique_ptr<Expression>{new EqualityExpression(this->currentToken.type, std::move(e), std::move(e1))};
+            e = std::unique_ptr<Expression>{new EqualityExpression(type, std::move(e), std::move(e1))};
         default:
             break;
     }
@@ -402,6 +431,7 @@ std::unique_ptr<Expression> Parser::parseConditionalExpression() {
         if (!(this->currentToken.type == TOKEN_COLON)) {
             // Error
         }
+        this->currentToken = this->lexer.getToken();
         e2 = parseConditionalExpression();
         e = std::unique_ptr<Expression>{new ConditionalExpression(std::move(e), std::move(e1), std::move(e2))};
     }

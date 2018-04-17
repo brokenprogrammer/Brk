@@ -1,5 +1,6 @@
 #include "lexer.hpp"
 #include <cctype>
+#include <iostream>
 
 Lexer::Lexer(std::string content) {
     this->content = content;
@@ -9,6 +10,7 @@ Lexer::Lexer(std::string content) {
     if (this->start != this->end) {
         this->current_char = *this->start;
         this->line = this->read_curr = this->curr = this->start;
+        this->read_curr += 1;
         this->line_count = 1;
     }
 
@@ -61,37 +63,6 @@ Token Lexer::getToken() {
             case EOF:
                 token.type = TOKEN_EOF;
                 break;
-            case '\'':
-                break;
-            case '"':
-                // Such faulty implementation, Doesn't support escaped quotes and 
-                // doesn't react to non terminated string at the end of line.
-                // TODO: Fix whats stated above. - Oskar Mendel 2018-03-19
-                token.type = TOKEN_STRING;
-                while (this->current_char != '"') {
-                    this->tokenizerStep();
-                }
-                
-                token.str = std::string(pos, this->curr+1);
-                this->tokenizerStep();
-
-                break;
-            case '.':
-                // TODO: Period have to have some logic to it in the future. - Oskar Mendel 2018-03-19
-                token.type = TOKEN_PERIOD;
-                break;
-            case ',':
-                token.type = TOKEN_COMMA;
-                break;
-            case '?':
-                token.type = TOKEN_QUESTION;
-                break;
-            case ':':
-                token.type = TOKEN_COLON;
-                break;
-            case ';':
-                token.type = TOKEN_SEMICOLON;
-                break;
             case '(':
                 token.type = TOKEN_OPENPAREN;
                 break;
@@ -110,46 +81,178 @@ Token Lexer::getToken() {
             case ']':
                 token.type = TOKEN_CLOSEBRACKET;
                 break;
+            case '.':
+                // TODO: Period have to have some logic to it in the future. - Oskar Mendel 2018-03-19
+                token.type = TOKEN_PERIOD;
+                break;
+            case ',':
+                token.type = TOKEN_COMMA;
+                break;
+            case '?':
+                token.type = TOKEN_QUESTION;
+                break;
+            case ':':
+                token.type = TOKEN_COLON;
+                break;
+            case ';':
+                token.type = TOKEN_SEMICOLON;
+                break;
+            case '\'': //TODO before moving from lexer. Oskar Mendel 2018-04-03
+                break;
+            case '"':
+                token.type = TOKEN_STRING;
+                while (this->current_char != '"') {
+                    if (this->current_char == '\n' || this->current_char < 0) {
+                        //TODO: Error, string is not terminated. Oskar Mendel 2018-04-03
+                    }
+
+                    //TODO: Doesn't check escape sequence within string. Oskar Mendel 2018-04-03
+                    this->tokenizerStep();
+                }
+                
+                token.str = std::string(pos, this->curr+1);
+                token.string = token.str.c_str();
+                token.length = (this->curr+1) - pos;
+
+                this->tokenizerStep();
+                break;
             case '\\':
-                break;
-            case '<':
-                break;
-            case '>':
-                break;
-            case '_':
-                break;
-            case '$':
-                break;
-            case '%':
-                break;
-            case '#':
-                break;
-            case '&':
-                break;
-            case '^':
-                break;
-            case '!':
-                break;
-            case '*':
-                break;
-            case '/':
                 break;
             case '+':
                 token.type = TOKEN_ADD;
-                if (this->current_char == '=') {
+                if (this->current_char == '+') {
+                    token.type = TOKEN_ADDADD;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
                     token.type = TOKEN_ADDEQUAL;
                     this->tokenizerStep();
                     token.str = std::string(pos, this->curr);
                 }
                 break;
             case '-':
+                token.type = TOKEN_SUBTRACT;
+                if (this->current_char == '-') {
+                    token.type = TOKEN_SUBTRACTSUBTRACT;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_SUBTRACTEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
-            case '|':
+            case '*':
+                token.type = TOKEN_MULTIPLY;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_MULTIPLYEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
-            case '~':
+            case '/':
+                token.type = TOKEN_DIVIDE;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_DIVIDEEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '%':
+                token.type = TOKEN_MOD;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_MODEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
             case '=':
                 token.type = TOKEN_EQUAL;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_ISEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '!':
+                token.type = TOKEN_NOT;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_NOTEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '#':
+                token.type = TOKEN_HASH;
+                break;
+            case '$':
+                token.type = TOKEN_DOLLAR;
+                break;
+            case '&':
+                token.type = TOKEN_AND;
+                if (this->current_char == '&') {
+                    token.type = TOKEN_LOGICALAND;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_ANDEQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '|':
+                token.type = TOKEN_OR;
+                if (this->current_char == '|') {
+                    token.type = TOKEN_LOGICALOR;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_OREQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '~':
+                token.type = TOKEN_XOR;
+                if (this->current_char == '=') {
+                    token.type = TOKEN_XOREQUAL;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '<':
+                token.type = TOKEN_LOWERTHAN;
+                if (this->current_char == '<') {
+                    token.type = TOKEN_SHIFTLEFT;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    if (this->current_char == '=') {
+                        token.type = TOKEN_SHIFTLEFTEQUAL;
+                        this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    }
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_LOWEROREQUALS;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
+                break;
+            case '>':
+                token.type = TOKEN_GREATERTHAN;
+                if (this->current_char == '>') {
+                    token.type = TOKEN_SHIFTRIGHT;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    if (this->current_char == '=') {
+                        token.type = TOKEN_SHIFTRIGHTEQUAL;
+                        this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                    }
+                } else if (this->current_char == '=') {
+                    token.type = TOKEN_GREATEROREQUALS;
+                    this->tokenizerStep();
+                    token.str = std::string(pos, this->curr);
+                }
                 break;
             default:
                 token.type = TOKEN_INVALID;
@@ -189,32 +292,237 @@ void Lexer::tokenizerStep() {
     }
 }
 
-// TODO: This is a trash function for scanning numbers, make it more robust when
-//  scanning floating points numbers and add support for: binary, hex, octal..
-//  Oskar Mendel 2018-03-19
 Token Lexer::tokenizerScanNumber() {
+    std::string::iterator nCurr = this->curr;   //TODO: Is there a better way to store theese? Oskar Mendel 2018-04-09
+    std::string::iterator nRead_curr = this->read_curr;
+    std::string::iterator nLine = this->line;
+    char nCurrent_char = this->current_char;
     Token token = {};
     token.str = this->current_char;
-    token.type = TOKEN_INTEGER;
+    token.type = TOKEN_INT32;
+    int base = 10;
+    brk_uint64 n = 0;
+    int d = 0;
 
-    std::string::iterator pos = this->curr;
-
-    char current = this->current_char;
-    while(isDigit(current)) {
+    if (this->current_char == '0') {
         this->tokenizerStep();
-        if (this->current_char == '.') {
-            if (token.type != TOKEN_FLOATING) {
-                token.type = TOKEN_FLOATING;
+        switch (this->current_char) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+                n = this->current_char - '0';
                 this->tokenizerStep();
-                current = this->current_char;
-            } else {
-                // Multiple dots were found in the number..
-            }
+                base = 8;
+                break;
+            case 'x':
+            case 'X':
+                this->tokenizerStep();
+                base = 16;
+                break;
+            case 'b':
+            case 'B':
+                this->tokenizerStep();
+                base = 2;
+                break;
         }
-        current = this->current_char;
     }
 
-    token.str = std::string(pos, this->curr);
+    while (1) {
+        switch (this->current_char) {
+            case '0':
+            case '1':
+                d = this->current_char - '0';
+                this->tokenizerStep();
+                break;
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+                if (base == 2) {
+                    //TODO: Error
+                }
+                d = this->current_char - '0';
+                this->tokenizerStep();
+                break;
+            case '8':
+            case '9':
+                if (base < 10) {
+                    //TODO: Error
+                }
+                d = this->current_char - '0';
+                this->tokenizerStep();
+                break;
+            case 'a':
+            case 'b':
+            case 'c':
+            case 'd':
+            case 'e':
+            case 'f':
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+            case 'F':
+                if (base != 16) {
+                    //TODO: Error
+                }
+
+                if (this->current_char >= 'a') {
+                    d = this->current_char + 10 - 'a';
+                } else {
+                    d = this->current_char + 10 - 'A';
+                }
+
+                this->tokenizerStep();
+                break;
+            case '.':
+                this->curr = nCurr;
+                this->read_curr = nRead_curr;
+                this->line = nLine;
+                this->current_char = nCurrent_char;
+                return tokenizerScanRealNumber();
+            default:
+                goto isDone;
+        }
+
+        n = n * base + d;
+    }
+
+isDone:
+    //Parse trailing flags.. 
+    enum FLAGS {
+        FLAGS_NONE = 0,
+        FLAGS_DECIMAL = 1,
+        FLAGS_UNSIGNED = 2,
+        FLAGS_LONG = 4
+    };
+
+    FLAGS flags = (base == 10) ? FLAGS_DECIMAL : FLAGS_NONE;
+    while (1) {
+        unsigned char f;
+        switch (this->current_char) {
+            case 'u':
+            case 'U':
+                f = FLAGS_UNSIGNED;
+                goto L1;
+            case 'l':
+            case 'L':
+                f = FLAGS_LONG;
+            L1:
+                if (flags & f) {
+                    //Error
+                }
+                flags = (FLAGS)(flags | f);
+                this->tokenizerStep();
+                continue;
+            default:
+                break;
+        }
+        break;
+    }
+
+    switch (flags) {
+        case FLAGS_NONE:    // Octal or Hex constant.
+            if (n & 0x8000000000000000L) {
+                token.type = TOKEN_UINT64;
+            } else if (n & 0xFFFFFFFF00000000L) {
+                token.type = TOKEN_INT64;
+            } else if (n & 0x80000000) {
+                token.type = TOKEN_UINT32;
+            } else {
+                token.type = TOKEN_INT32;
+            }
+            break;
+        case FLAGS_DECIMAL:
+            if (n & 0x8000000000000000L) {
+                //TODO: Error handling
+                token.type = TOKEN_UINT64;
+            } else if (n & 0xFFFFFFFF00000000L) {
+                token.type = TOKEN_INT64;
+            } else {
+                token.type = TOKEN_INT32;
+            }
+            break;
+        case FLAGS_UNSIGNED:
+        case FLAGS_DECIMAL | FLAGS_UNSIGNED:
+            if (n & 0xFFFFFFFF00000000L) {
+                token.type = TOKEN_UINT64;
+            } else {
+                token.type = TOKEN_UINT32;
+            }
+            break;
+        case FLAGS_LONG:
+        case FLAGS_DECIMAL | FLAGS_LONG:
+            if (n & 0x8000000000000000) {
+                token.type = TOKEN_UINT64;
+            } else {
+                token.type = TOKEN_INT64;
+            }
+            break;
+        case FLAGS_UNSIGNED | FLAGS_LONG:
+        case FLAGS_DECIMAL | FLAGS_UNSIGNED | FLAGS_LONG:
+            token.type = TOKEN_UINT64;
+            break;
+    }
+
+    token.int64Val = n;
+    return token;
+}
+
+Token Lexer::tokenizerScanRealNumber() {
+    Token token = {};
+    std::string c = "";
+
+    // Digits left of '.'
+    while(1) {
+        if (this->current_char == '.') {
+            c += this->current_char;
+            this->tokenizerStep();
+            break;
+        }
+
+        if (isDigit(this->current_char)) {
+            c += this->current_char;
+            this->tokenizerStep();
+            continue;
+        }
+
+        break;
+    }
+
+    //Digits right of '.'
+    while(1) {
+        if (isDigit(this->current_char)) {
+            c += this->current_char;
+            this->tokenizerStep();
+            continue;
+        }
+
+        break;
+    }
+
+    //TODO: If scientific notation should be added it can be added here.. Oskar Mendel 2018-04-09
+
+    switch(this->current_char) {
+        case 'f':
+        case 'F':
+            token.float64Val = std::stof(c);
+            token.type = TOKEN_FLOAT32;
+            this->tokenizerStep();
+            break;
+        default:
+            token.float64Val = std::stod(c);
+            token.type = TOKEN_FLOAT64;
+            break;
+    }
 
     return token;
 }
