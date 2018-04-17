@@ -56,6 +56,21 @@ llvm::Value* ComplementExpression::codegen() {
 }
 
 llvm::Value* NegativeExpression::codegen() {
+    llvm::Value* value = this->e->codegen();
+    llvm::Value* negativeOne;
+
+    if (!value) {
+        return nullptr;
+    }
+
+    if (value->getType()->isFloatTy() || value->getType()->isDoubleTy()) {
+        negativeOne = llvm::ConstantFP::get(TheContext, llvm::APFloat(-1.0));
+        return Builder.CreateFMul(value, negativeOne);
+    } else if (value->getType()->isIntegerTy()) {
+        negativeOne = llvm::ConstantInt::get(TheContext, llvm::APInt(32, -1, true));
+        return Builder.CreateMul(value, negativeOne);
+    }
+
     return nullptr;
 }
 

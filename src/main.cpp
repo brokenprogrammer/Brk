@@ -33,6 +33,16 @@ int main (int argc, char **argv)
         Parser parser(content);
         parser.parse();
         parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
+        parser.parse();
         
         // Token t = lexer.getToken();
         // std::cout << "TokenKeyword: " << Tokens[t.type].tokenString << ": " << t.str << std::endl;
