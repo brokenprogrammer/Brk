@@ -3,6 +3,7 @@
 
 #include "lexer.hpp"
 #include "expression.hpp"
+#include "statement.hpp"
 #include <memory>
 #include <vector>
 
@@ -16,6 +17,8 @@ public:
     void parse();
 
 private:
+    std::unique_ptr<Statement> parseStatement();
+
     std::unique_ptr<Expression> parsePrimaryExpression();
     std::unique_ptr<Expression> parsePostExpression(std::unique_ptr<Expression> e);
     std::unique_ptr<Expression> parseUnaryExpression();

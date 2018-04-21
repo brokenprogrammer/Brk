@@ -29,6 +29,265 @@ void Parser::parse() {
     }
 }
 
+std::unique_ptr<Statement> Parser::parseStatement() {
+    std::unique_ptr<Statement> s;
+    Token *t;
+
+    switch (this->currentToken.type) {
+        case TOKEN_IDENTIFIER:
+            // Look ahead to see if its a decl, label or expression.
+            // t = this->lexer.peek();
+            if (t.value == TOKEN_SEMICOLON) { // Check if its a label
+                Identifier *identifier;
+                //identifier = this->currentToken.str;
+
+                this->currentToken = this->lexer.getToken(); //Eat Identifier
+                this->currentToken = this->lexer.getToken(); //Eat Semicolon
+
+                s = parseStatement();
+                //s = std::unique_ptr<Statement>{new LabelStatement()};
+            } else if (isDeclaration()) {
+                //TODO: Oskar Mendel 2018-04-22
+            } else {
+                std::unique_ptr<Expression> expression;
+                expression = parseExpression();
+
+                // Check that current token is a ';'
+                //s = std::unique_ptr<Statement>{new ExpressionStatement()};
+            } break;
+        case TOKEN_UINT32:
+        case TOKEN_INT32:
+        case TOKEN_UINT64:
+        case TOKEN_INT64:
+        case TOKEN_FLOAT32:
+        case TOKEN_FLOAT64:
+        case TOKEN_STRING:
+        case TOKEN_OPENPAREN:
+        case TOKEN_MULTIPLY:
+        case TOKEN_SUBTRACT:
+        case TOKEN_ADD:
+        case TOKEN_ADDADD:
+        case TOKEN_SUBTRACTSUBTRACT:
+            {
+                std::unique_ptr<Expression> expression;
+                expression = parseExpression();
+                // Check that current token is a ';'
+                //s = std::unique_ptr<Statement>{new ExpressionStatement()};
+            } break;
+        case TOKEN_AUTO:
+        case TOKEN_CONST:
+            {
+
+            } break;
+        /*case TOKEN_STRUCT:        TODO: Oskar Mendel 2018-04-22
+        case TOKEN_UNION:
+        case TOKEN_CLASS:
+        case TOKEN_ENUM:
+            break; */
+        case TOKEN_OPENBRACE:
+            {
+                // Array *statements
+                while (this->currentToken.value != TOKEN_CLOSEBRACE) {
+                    // Array push (parseStatement())
+                }
+                //s = std::unique_ptr<Statement>{new CompoundStatement()};
+
+                this->currentToken = this->lexer.getToken();
+            } break;
+        case TOKEN_WHILE:
+            {
+                std::unique_ptr<Expression> condition;
+                std::unique_ptr<Statement> body;
+
+                this->currentToken = this->lexer.getToken();
+                // Check that current token is '('
+                condition = parseExpression();
+                // Check that current token is ')'
+                body = parseStatement();
+                s = std::unique_ptr<Statement>{new WhileStatement()};
+            } break;
+        case TOKEN_SEMICOLON:
+            if (false) {
+                // Error use {} for empty expression not ';'
+            }
+            this->currentToken = this->lexer.getToken();
+            s = std::unique_ptr<Statement>{new ExpressionStatement()};
+            break;
+        case TOKEN_DO:
+            {
+                std::unique_ptr<Expression> condition;
+                std::unique_ptr<Statement> body;
+
+                this->currentToken = this->lexer.getToken();
+
+                body = parseStatement();
+                // Check current token is 'while'
+                // Check current token is '('
+                condition = parseExpression();
+                // Check current token is ')'
+                s = std::unique_ptr<Statement>{new DoStatement()};
+            } break;
+        case TOKEN_FOR:
+            {
+                std::unique_ptr<Statement> init;
+                std::unique_ptr<Expression> condition;
+                std::unique_ptr<Expression> increment;
+                std::unique_ptr<Statement> body;
+
+                this->currentToken = this->lexer.getToken();
+
+                //Check current token is '('
+                if (this->currentToken.value == TOKEN_SEMICOLON) {
+                    init = nullptr;
+                    this->currentToken = this->lexer.getToken();
+                } else {
+                    init = parseStatement();
+                }
+
+                if (this->currentToken.value == TOKEN_SEMICOLON) {
+                    condition = nullptr;
+                    this->currentToken = this->lexer.getToken();
+                } else {
+                    condition = parseExpression();
+                    // Check current token is ';'
+                }
+
+                if (this->currentToken.value == TOKEN_CLOSEPAREN) {
+                    increment = nullptr;
+                    this->currentToken = this->lexer.getToken();
+                } else {
+                    increment = parseExpression();
+                    // Check current token is ')'
+                }
+
+                body = parseStatement();
+                s = std::unique_ptr<Statement>{new ForStatement()};
+            } break;
+        case TOKEN_IF:
+            {
+                std::unique_ptr<Expression> condition;
+                std::unique_ptr<Statement> ifBody;
+                std::unique_ptr<Statement> elseBody;
+
+                this->currentToken = this->lexer.getToken();
+
+                // Check current token is '('
+                condition = parseExpression();
+                // check current token is ')'
+
+                if  (this->currentToken.value == TOKEN_ELSE) {
+                    this->currentToken = this->lexer.getToken();
+                    elseBody = parseStatement();
+                } else {
+                    elseBody = nullptr;
+                }
+
+                s = std::unique_ptr<Statement>{new IfStatement()};
+            } break;
+        case TOKEN_SWITCH:
+            {
+                std::unique_ptr<Expression> condition;
+                std::unique_ptr<Statement> body;
+
+                this->currentToken = this->lexer.getToken();
+                // Check current token is '('
+                condition = parseExpression();
+                // check current token is ')'
+                body = parseStatement();
+                s = std::unique_ptr<Statement>{new SwitchStatement()};
+            } break;
+        case TOKEN_CASE:
+            {   
+                std::unique_ptr<Expression> expression;
+                // Array* statements
+
+                this->currentToken = this->lexer.getToken();
+                expression = parseExpression();
+                // check current token is ':'
+
+                while (this->currentToken.value != TOKEN_CASE &&
+                        this->currentToken.value != TOKEN_DEFAULT &&
+                        this->currentToken.value != TOKEN_CLOSEBRACE) {
+                    // statements push (parseStatement())
+                }
+
+                s = std::unique_ptr<Statement>{new CompoundStatement()};
+                s = std::unique_ptr<Statement>{new ScopeStatement()};
+                s = std::unique_ptr<Statement>{new CaseStatement()};
+            } break;
+        case TOKEN_DEFAULT:
+            {
+                // Array* statements
+                this->currentToken = this->lexer.getToken();
+                // check current token is ':'
+                
+                while (this->currentToken.value != TOKEN_CASE &&
+                        this->currentToken.value != TOKEN_DEFAULT &&
+                        this->currentToken.value != TOKEN_CLOSEBRACE) {
+                    // statements push (parseStatement())
+                }
+
+                s = std::unique_ptr<Statement>{new CompoundStatement()};
+                s = std::unique_ptr<Statement>{new ScopeStatement()};
+                s = std::unique_ptr<Statement>{new DefaultStatement()};
+            } break;
+        case TOKEN_RETURN:
+            {
+                std::unique_ptr<Expression> expression;
+
+                this->currentToken = this->lexer.getToken();
+                
+                if (this->currentToken.value == TOKEN_SEMICOLON) {
+                    expression = nullptr;
+                } else {
+                    expression = parseExpression();
+                }
+
+                // Check that current token is ';'
+                s = std::unique_ptr<Statement>{new ReturnStatement()};
+            } break;
+        case TOKEN_BREAK:
+            {
+                Identifier *identifier;
+
+                this->currentToken = this->lexer.getToken();
+
+                if (this->currentToken.value == TOKEN_IDENTIFIER) {
+                    identifier = this->currentToken.str;
+                    this->currentToken = this->lexer.getToken();
+                } else {
+                    identifier = nullptr;
+                }
+                // Check that current token is ';'
+                s = std::unique_ptr<Statement>{new BreakStatement()};
+            } break;
+        case TOKEN_CONTINUE:
+            {
+                Identifier *identifier;
+
+                this->currentToken = this->lexer.getToken();
+
+                if (this->currentToken.value == TOKEN_IDENTIFIER) {
+                    identifier = this->currentToken.str;
+                    this->currentToken = this->lexer.getToken();
+                } else {
+                    identifier = nullptr;
+                }
+                // Check that current token is ';'
+                s = std::unique_ptr<Statement>{new ContinueStatement()};
+            } break;
+        /*case TOKEN_GOTO:
+        case TOKEN_LABEL:
+        case TOKEN_ASM:
+            break; */
+        default:
+            // Error "found token.toChars() instead of statement" TODO: Oskar Mendel 2018-04-22
+            s = nullptr;
+            break;
+
+    }
+}
+
 //TODO: Not implemented - Oskar Mendel 2018-03-27
 // TODO: Null
 // TODO:
