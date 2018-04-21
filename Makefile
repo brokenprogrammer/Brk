@@ -9,9 +9,7 @@ LLVMFLAGS=-IC:\msys32\mingw64/include -march=x86-64 -mtune=generic -O2 -pipe -D_
 CC=clang++
 
 debug:
-	LLVM_CXXFLAGS := $(llvm-config --cxxflags)
-	$(CC) $(LLVM_CXXFLAGS) src/main.cpp src/globals.cpp src/lexer.cpp src/parser.cpp src/expression.cpp $(LLVMFLAGS) $(DISABLED_WARNINGS) $(CFLAGS) -g $(LDFLAGS) -o brk.exe
+	$(CC) $(llvm-config --cxxflags) src/main.cpp src/globals.cpp src/lexer.cpp src/parser.cpp src/expression.cpp $(LLVMFLAGS) $(DISABLED_WARNINGS) $(CFLAGS) -g $(LDFLAGS) -o brk.exe
 
 release:
-	LLVM_CXXFLAGS := $(llvm-config --cxxflags)
-	$(CC) $(LLVM_CXXFLAGS) src/main.cpp $(DISABLED_WARNINGS) $(CFLAGS) -O3 -march=native $(LDFLAGS) -o brk.exe
+	$(CC) $(llvm-config --cxxflags) src/main.cpp $(DISABLED_WARNINGS) $(CFLAGS) -O3 -march=native $(LDFLAGS) -o brk.exe
